@@ -1,6 +1,6 @@
 """Fire detection module using Gemma 3N E4B model."""
 
-from gemma_3n.fire_detection.config import FireDetectionConfig
-from gemma_3n.fire_detection.detector import FireDetector
+from .config import FireDetectionConfig
+from .inference import process_video_inference
 
-__all__ = ["FireDetectionConfig", "FireDetector"]
+__all__ = ["FireDetectionConfig", "process_video_inference"]
