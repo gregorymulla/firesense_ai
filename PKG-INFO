@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: firesense
+Version: 0.1.0
+Summary: AI-powered fire detection system using Gemma 3N E4B vision model
+Home-page: https://github.com/gregorymulla/firesense_ai
+Author: Gregory Mulla
+Author-email: gregory.cr.mulla@gmail.com
+License: MIT
+Keywords: fire-detection computer-vision ai gemma video-analysis safety wildfire
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE

@@ -1,6 +1,9 @@
 # FireSense
 
-A modern Python project managed with [uv](https://github.com/astral-sh/uv) - the fast Python package manager.
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+FireSense is an AI-powered fire detection system that uses the Gemma 3N E4B vision model to analyze video content for fire and smoke detection. It provides real-time analysis, comprehensive fire characteristics assessment, and emergency response recommendations.
 
 ## Features
 
@@ -21,26 +24,35 @@ A modern Python project managed with [uv](https://github.com/astral-sh/uv) - the
 
 ### Installation
 
+#### From PyPI (Recommended)
+
+```bash
+pip install firesense
+```
+
+#### From Source
+
+1. Clone the repository:
+```bash
+git clone https://github.com/gregorymulla/firesense_ai.git
+cd firesense_ai
+```
+
+2. Install with pip:
+```bash
+pip install -e ".[dev]"
+```
+
+#### Using uv (Fastest)
+
 1. Install uv:
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-2. Clone the repository:
+2. Install firesense:
 ```bash
-git clone https://github.com/yourusername/firesense.git
-cd firesense
-```
-
-3. Create virtual environment and install dependencies:
-```bash
-uv venv
-uv pip install -e ".[dev]"
-```
-
-4. Set up pre-commit hooks:
-```bash
-pre-commit install
+uv pip install firesense
 ```
 
 ## Usage
@@ -48,17 +60,20 @@ pre-commit install
 ### Running the Application
 
 ```bash
-# Run with default settings
-uv run firesense run
+# Analyze a video file
+firesense analyze video.mp4
 
-# Run with custom host and port
-uv run firesense run --host 127.0.0.1 --port 8080
+# Analyze with custom settings
+firesense analyze video.mp4 --interval 1.0 --confidence 0.8
 
-# Run in debug mode
-uv run firesense --debug run
+# Preview frame extraction
+firesense preview video.mp4 --frames 10
 
-# Show application info
-uv run firesense info
+# Launch demo UI
+firesense demo wildfire_example_01
+
+# Process multiple videos
+firesense batch /path/to/videos --pattern "*.mp4"
 ```
 
 ### Development Commands

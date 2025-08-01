@@ -1,14 +1,17 @@
 [project]
-name = "gemma-3n"
+name = "firesense"
 version = "0.1.0"
-description = "A modern Python project managed with uv"
+description = "AI-powered fire detection system using Gemma 3N E4B vision model"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
-    {name = "Gregory Mulla", email = "gregory.cr.mulla@example.com"},
+    {name = "Gregory Mulla", email = "gregory.cr.mulla@gmail.com"},
 ]
-keywords = ["python", "uv", "modern", "gemma"]
+maintainers = [
+    {name = "Gregory Mulla", email = "gregory.cr.mulla@gmail.com"},
+]
+keywords = ["fire-detection", "computer-vision", "ai", "gemma", "video-analysis", "safety", "wildfire"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -69,6 +72,12 @@ quantization = [
 youtube = [
     "yt-dlp>=2023.12.30",
 ]
+
+[project.urls]
+Homepage = "https://github.com/gregorymulla/firesense_ai"
+Documentation = "https://github.com/gregorymulla/firesense_ai#readme"
+Repository = "https://github.com/gregorymulla/firesense_ai"
+Issues = "https://github.com/gregorymulla/firesense_ai/issues"
 
 [project.scripts]
 firesense = "gemma_3n.__main__:main"
