@@ -73,7 +73,7 @@ publish:
 	@echo "Building package..."
 	uv run python -m build
 	@echo "Publishing to PyPI..."
-	python scripts/publish.py
+	uv run python scripts/publish.py
 
 publish-clean:
 	rm -rf dist/ build/ *.egg-info/
