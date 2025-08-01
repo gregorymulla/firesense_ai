@@ -1,8 +1,9 @@
 """Pytest configuration and fixtures."""
 
+from pathlib import Path
+
 import pytest
 from rich.console import Console
-from pathlib import Path
 
 from gemma_3n.fire_detection.config import FireDetectionConfig
 
