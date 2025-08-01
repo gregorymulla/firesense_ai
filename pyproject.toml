@@ -1,6 +1,6 @@
 [project]
 name = "firesense"
-version = "0.1.0"
+version = "0.2.0"
 description = "AI-powered fire detection system using Gemma 3N E4B vision model"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -148,4 +148,10 @@ exclude_lines = [
     "raise NotImplementedError",
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
+]
+
+[dependency-groups]
+dev = [
+    "build>=1.2.2.post1",
+    "twine>=6.1.0",
 ]
