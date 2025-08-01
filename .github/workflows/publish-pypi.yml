@@ -8,6 +8,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message, 'new release')
+    permissions:
+      id-token: write  # Required for PyPI trusted publishing
+      contents: write  # Required for creating tags and releases
     
     steps:
     - uses: actions/checkout@v4
@@ -66,7 +69,6 @@ jobs:
     - name: Publish Package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
         verbose: true
 
     - name: Create Git Tag

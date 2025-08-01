@@ -162,7 +162,18 @@ The GitHub Actions workflow will automatically:
 4. Create a git tag
 5. Create a GitHub release
 
-**Note**: Make sure you have set up the `PYPI_API_TOKEN` secret in your GitHub repository settings.
+### Setting up PyPI Trusted Publishing
+
+This project uses PyPI's Trusted Publishing feature for secure package uploads. To set it up:
+
+1. Go to https://pypi.org/manage/project/firesense/settings/publishing/
+2. Add a new trusted publisher with these settings:
+   - Owner: `gregorymulla`
+   - Repository: `firesense_ai`
+   - Workflow name: `publish-pypi.yml`
+   - Environment: (leave empty)
+
+No API tokens or passwords needed!
 
 ## License
 
