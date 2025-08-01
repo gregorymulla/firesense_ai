@@ -3,7 +3,7 @@
 from gemma_3n.fire_detection.cli import app
 
 
-def main():
+def main() -> None:
     """Run the CLI application."""
     app()
 

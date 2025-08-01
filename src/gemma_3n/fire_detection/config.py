@@ -1,7 +1,7 @@
 """Configuration models for fire detection system."""
 
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 import torch
 from pydantic import BaseModel, Field, validator
@@ -92,7 +92,7 @@ class VideoProcessingConfig(BaseModel):
     max_workers: int = Field(default=4, ge=1, le=16, description="Max worker processes")
 
     @validator("end_time")
-    def validate_end_time(cls, v: float | None, values: dict) -> float | None:
+    def validate_end_time(cls, v: float | None, values: dict[str, Any]) -> float | None:
         """Validate end time is after start time."""
         if v is not None and "start_time" in values:
             start_time = values["start_time"]

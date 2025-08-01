@@ -11,7 +11,9 @@ from .model import gemma_fire_inference, setup_model
 from .video import download_and_extract_frames, validate_video_id
 
 
-def process_video_inference(video_id, interval_seconds=1, output_dir="."):
+def process_video_inference(
+    video_id: str, interval_seconds: float = 1, output_dir: str = "."
+) -> str:
     """Process a YouTube video: download, extract frames, and run inference on each frame."""
 
     # Create output directory if specified
@@ -22,7 +24,7 @@ def process_video_inference(video_id, interval_seconds=1, output_dir="."):
     # Extract frames
     print("\n=== Frame Extraction ===")
     frames_dir, frames_info, video_info = download_and_extract_frames(
-        video_id, interval_seconds=interval_seconds, output_base_dir=output_path
+        video_id, interval_seconds=interval_seconds, output_base_dir=str(output_path)
     )
 
     # Load model
@@ -171,4 +173,4 @@ def process_video_inference(video_id, interval_seconds=1, output_dir="."):
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
-    return output_file
+    return str(output_file)

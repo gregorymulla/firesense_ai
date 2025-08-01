@@ -2,6 +2,7 @@
 
 import json
 import os
+from typing import Any
 
 import torch
 from pydantic import BaseModel, ValidationError
@@ -23,7 +24,7 @@ class FireDescription(BaseModel):
     has_out_of_control_fire: bool
 
 
-def setup_model():
+def setup_model() -> tuple[Any, Any]:
     """Load the Gemma model for inference."""
     print("Loading Gemma model...")
 
@@ -31,7 +32,7 @@ def setup_model():
     global FastModel
     if FastModel is None:
         try:
-            from unsloth import FastModel
+            from unsloth import FastModel  # type: ignore
         except NotImplementedError as e:
             print(f"Warning: {e}")
             print("Falling back to standard transformers implementation...")
@@ -45,7 +46,7 @@ def setup_model():
                 torch_dtype=torch_import.float16,
                 load_in_4bit=True,
             )
-            tokenizer = AutoTokenizer.from_pretrained("unsloth/gemma-3n-E4B-it")
+            tokenizer = AutoTokenizer.from_pretrained("unsloth/gemma-3n-E4B-it")  # type: ignore
 
             model.eval()
             torch_import.set_grad_enabled(False)
@@ -58,7 +59,7 @@ def setup_model():
 
     torch._dynamo.config.suppress_errors = True
 
-    model, tokenizer = FastModel.from_pretrained(
+    model, tokenizer = FastModel.from_pretrained(  # type: ignore
         model_name="unsloth/gemma-3n-E4B-it",
         dtype=None,
         max_seq_length=1024,
@@ -77,7 +78,10 @@ def setup_model():
 
 
 def gemma_fire_inference(
-    model, tokenizer, messages, max_new_tokens: int = 256
+    model: Any,
+    tokenizer: Any,
+    messages: list[dict[str, Any]],
+    max_new_tokens: int = 256,
 ) -> FireDescription:
     """Run fire detection inference on an image."""
     system_prompt = """

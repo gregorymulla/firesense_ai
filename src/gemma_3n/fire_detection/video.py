@@ -2,12 +2,13 @@
 
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import cv2
-import yt_dlp
+import yt_dlp  # type: ignore
 
 
-def validate_video_id(video_id):
+def validate_video_id(video_id: str) -> str:
     """Validate and clean YouTube video ID."""
     if "youtube.com/watch?v=" in video_id:
         video_id = video_id.split("watch?v=")[1].split("&")[0]
@@ -21,8 +22,11 @@ def validate_video_id(video_id):
 
 
 def download_and_extract_frames(
-    video_id, interval_seconds=1, quality="720p", output_base_dir="."
-):
+    video_id: str,
+    interval_seconds: float = 1,
+    quality: str = "720p",
+    output_base_dir: str = ".",
+) -> tuple[Path, list[dict[str, Any]], dict[str, Any]]:
     """Download YouTube video and extract frames at specified intervals."""
     # Validate video ID
     clean_video_id = validate_video_id(video_id)

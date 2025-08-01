@@ -27,7 +27,7 @@ def demo(
     no_browser: bool = typer.Option(
         False, "--no-browser", help="Don't open browser automatically"
     ),
-):
+) -> None:
     """Launch demo UI for pre-analyzed fire detection results."""
 
     console.print("[bold green]🔥 Launching Fire Detection Demo[/bold green]")
@@ -138,7 +138,7 @@ def analyze(
     output_dir: Path = typer.Option(  # noqa: B008
         ".", "--output", "-o", help="Output directory for results"
     ),
-):
+) -> None:
     """Download YouTube video, extract frames, and analyze for fire detection."""
 
     console.print("[bold green]🔥 Starting Fire Detection Analysis[/bold green]")

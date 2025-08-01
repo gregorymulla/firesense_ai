@@ -26,7 +26,7 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 
 
 @app.get("/api/demo/{video_id}")
-async def get_demo(video_id: str):
+async def get_demo(video_id: str) -> FileResponse:
     """Serve the JSON file for the specified video_id."""
     demo_file = PROJECT_ROOT / "demo" / f"{video_id}.json"
 
@@ -52,7 +52,7 @@ else:
 
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> dict[str, str]:
     """Health check endpoint."""
     return {"status": "healthy", "service": "fire-detection-demo"}
 
