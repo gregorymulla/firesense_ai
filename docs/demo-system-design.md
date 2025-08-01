@@ -5,14 +5,14 @@
 A simplified fire detection demonstration system consisting of:
 1. **FastAPI Server**: Serves pre-analyzed fire detection JSON results
 2. **React UI**: Displays video and fire detection status
-3. **CLI Integration**: `gemma-3n demo <video_id>` command
+3. **CLI Integration**: `firesense demo <video_id>` command
 
 ## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     CLI Command                              │
-│                gemma-3n demo <video_id>                      │
+│                firesense demo <video_id>                     │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -445,7 +445,7 @@ This design provides a simple but effective demonstration system for the fire de
 
 - **Minimal Backend**: Single FastAPI endpoint serves JSON files directly
 - **React UI**: Clean interface showing video and detection status side-by-side
-- **CLI Integration**: Simple command `gemma-3n demo <video_id>` launches everything
+- **CLI Integration**: Simple command `firesense demo <video_id>` launches everything
 - **No GPU Required**: Uses pre-analyzed results, perfect for demos
 - **Easy Setup**: Both servers start with one command
 

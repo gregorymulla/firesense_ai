@@ -1,4 +1,4 @@
-# Gemma 3N
+# FireSense
 
 A modern Python project managed with [uv](https://github.com/astral-sh/uv) - the fast Python package manager.
 
@@ -28,8 +28,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 2. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/gemma-3n.git
-cd gemma-3n
+git clone https://github.com/yourusername/firesense.git
+cd firesense
 ```
 
 3. Create virtual environment and install dependencies:
@@ -49,16 +49,16 @@ pre-commit install
 
 ```bash
 # Run with default settings
-uv run gemma-3n run
+uv run firesense run
 
 # Run with custom host and port
-uv run gemma-3n run --host 127.0.0.1 --port 8080
+uv run firesense run --host 127.0.0.1 --port 8080
 
 # Run in debug mode
-uv run gemma-3n --debug run
+uv run firesense --debug run
 
 # Show application info
-uv run gemma-3n info
+uv run firesense info
 ```
 
 ### Development Commands
@@ -89,7 +89,7 @@ make clean
 ## Project Structure
 
 ```
-gemma-3n/
+firesense/
 ├── src/gemma_3n/       # Source code
 │   └── fire_detection/ # Fire detection system
 │       ├── models/     # Data models and AI interface

@@ -71,7 +71,7 @@ youtube = [
 ]
 
 [project.scripts]
-gemma-3n = "gemma_3n.__main__:main"
+firesense = "gemma_3n.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
