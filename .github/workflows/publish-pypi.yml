@@ -53,9 +53,12 @@ jobs:
           sed -i "s/__version__ = .*/__version__ = \"${{ env.RELEASE_VERSION }}\"/" src/gemma_3n/__init__.py
         fi
 
+    - name: Create virtual environment
+      run: uv venv
+
     - name: Install build dependencies
       run: |
-        uv pip install build twine
+        uv add --dev build twine
 
     - name: Build Package
       run: uv run python -m build
