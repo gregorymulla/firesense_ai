@@ -66,9 +66,19 @@ jobs:
     - name: Build Package
       run: uv run python -m build
 
+    - name: Verify PyPI Token
+      run: |
+        if [ -z "${{ secrets.PYPI_API_TOKEN }}" ]; then
+          echo "::error::PYPI_API_TOKEN secret is not set. Please add it to your repository secrets."
+          exit 1
+        fi
+        echo "✓ PYPI_API_TOKEN is configured"
+
     - name: Publish Package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
         verbose: true
 
     - name: Create Git Tag
