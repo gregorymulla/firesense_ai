@@ -67,3 +67,13 @@ fix: format lint-fix
 
 # Full check
 check: format lint type-check test
+
+# Publishing commands
+publish:
+	@echo "Building package..."
+	uv run python -m build
+	@echo "Publishing to PyPI..."
+	python scripts/publish.py
+
+publish-clean:
+	rm -rf dist/ build/ *.egg-info/

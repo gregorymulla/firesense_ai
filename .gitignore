@@ -166,4 +166,4 @@ ui/analysis_config.json
 
 # Allow test fixtures (small files only)
 !tests/fixtures/*.jpg
-!tests/fixtures/*.mp4
+!tests/fixtures/*.mp4.pypirc
