@@ -67,18 +67,20 @@ def setup_model():
 # === Inference function (from direct_inference.py) ===
 def gemma_fire_inference(model, tokenizer, messages, max_new_tokens: int = 256) -> FireDescription:
     """Run fire detection inference on an image."""
-    system_prompt = (
-        "You are an image‑safety assistant.\n"
-        "Respond with **one and only one** JSON object—no markdown fences, "
-        "no surrounding text.\n\n"
-        "The JSON MUST match this exact schema, in this exact key order:\n"
-        '{\n'
-        '  "has_flame": boolean,                       # true if any flame is visible\n'
-        '  "has_out_of_control_fire": boolean,         # true if fire is a real danger that can spreading or is uncontained, false if there is no danger for example a picture of a fire, or even a large fire in a firepit\n'
-        '}\n\n'
-        "Formatting rules:\n"
-        "• Use lowercase true/false for booleans.\n"
-    )
+    system_prompt = """
+    You are **FireWatch**, a vision‑language model for real‑time fire detection.
+
+On every image you receive, output **one digit only** (no words, no punctuation):
+
+0 – No flame present  
+1 – Benign or illusory flame (birthday candle, stove burner, lighter, match, or a fire video/animation on a TV, monitor, tablet, or phone)  
+2 – Contained real flame (fire pit, barbecue, indoor fireplace)  
+3 – Dangerous uncontrolled fire (spreading or uncontained flames / heavy smoke)
+
+If unsure, choose the **higher, safer** category.
+
+Return nothing except that single digit.
+    """
 
     system_message = {
         "role": "system",
@@ -289,7 +291,7 @@ def process_video_inference(video_id, interval_seconds=1, output_dir="."):
             "role": "user",
             "content": [
                 {"type": "image", "image": frame_info['path']},
-                {"type": "text", "text": "Describe any fire hazards you see."}
+                {"type": "text", "text": "Classify  0/1/2/3:"}
             ]
         }]
         
