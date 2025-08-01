@@ -1,0 +1,97 @@
+name: Publish to PyPI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'new release')
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Extract Version from Commit Message
+      run: |
+        VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oP '(?<=new release )\S+')
+        if [ -z "$VERSION" ]; then
+          echo "Error: Could not extract version from commit message"
+          exit 1
+        fi
+        # Validate version format (basic semver check)
+        if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+          echo "Error: Version '$VERSION' does not match semver format (X.Y.Z)"
+          exit 1
+        fi
+        echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+        echo "Extracted version: $VERSION"
+
+    - name: Check if tag already exists
+      run: |
+        if git rev-parse "v${{ env.RELEASE_VERSION }}" >/dev/null 2>&1; then
+          echo "Error: Tag v${{ env.RELEASE_VERSION }} already exists"
+          exit 1
+        fi
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python
+      run: uv python install 3.11
+
+    - name: Update Version in pyproject.toml
+      run: |
+        # Update version in pyproject.toml
+        sed -i "s/^version = .*/version = \"${{ env.RELEASE_VERSION }}\"/" pyproject.toml
+        
+        # Also update version in __init__.py if it exists
+        if [ -f "src/gemma_3n/__init__.py" ]; then
+          sed -i "s/__version__ = .*/__version__ = \"${{ env.RELEASE_VERSION }}\"/" src/gemma_3n/__init__.py
+        fi
+
+    - name: Install build dependencies
+      run: |
+        uv pip install build twine
+
+    - name: Build Package
+      run: uv run python -m build
+
+    - name: Publish Package to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        uv run twine upload dist/*
+
+    - name: Create Git Tag
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git tag -a "v${{ env.RELEASE_VERSION }}" -m "Release v${{ env.RELEASE_VERSION }}"
+        git push origin "v${{ env.RELEASE_VERSION }}"
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ env.RELEASE_VERSION }}
+        release_name: Release v${{ env.RELEASE_VERSION }}
+        body: |
+          Release v${{ env.RELEASE_VERSION }} has been published to PyPI.
+          
+          Install with:
+          ```bash
+          pip install firesense==${{ env.RELEASE_VERSION }}
+          ```
+          
+          Or with uv:
+          ```bash
+          uv pip install firesense==${{ env.RELEASE_VERSION }}
+          ```
+        draft: false
+        prerelease: false

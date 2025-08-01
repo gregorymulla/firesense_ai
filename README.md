@@ -146,6 +146,24 @@ GEMMA_LOG_LEVEL=DEBUG
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
+## Releasing
+
+To publish a new release to PyPI, simply push a commit to the main branch with a message starting with "new release" followed by the version number:
+
+```bash
+git commit -m "new release 0.3.0"
+git push origin main
+```
+
+The GitHub Actions workflow will automatically:
+1. Extract the version from the commit message
+2. Update the version in `pyproject.toml` and `__init__.py`
+3. Build and publish the package to PyPI
+4. Create a git tag
+5. Create a GitHub release
+
+**Note**: Make sure you have set up the `PYPI_API_TOKEN` secret in your GitHub repository settings.
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
