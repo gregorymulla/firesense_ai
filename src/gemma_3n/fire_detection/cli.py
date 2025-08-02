@@ -10,6 +10,7 @@ import typer
 from rich.console import Console
 
 from .inference import process_video_inference
+from .mock_inference_pipeline import process_video_inference_mock
 
 app = typer.Typer(
     name="firesense",
@@ -142,15 +143,36 @@ def analyze(
     """Download YouTube video, extract frames, and analyze for fire detection."""
 
     console.print("[bold green]🔥 Starting Fire Detection Analysis[/bold green]")
+    
+    # Check GPU availability
+    import torch
+    gpu_available = torch.cuda.is_available()
+    
+    if not gpu_available:
+        console.print("\n[yellow]⚠️  GPU Not Available - Using Mock Inference[/yellow]")
+        console.print("[dim]Running with mock inference that generates random results for demonstration.[/dim]")
+        console.print("[dim]For real fire detection, a CUDA-capable GPU is required.[/dim]")
+        console.print()
+    
     console.print(f"[blue]Video ID: {video_id}[/blue]")
     console.print(f"[blue]Frame interval: {interval}s[/blue]")
     console.print(f"[blue]Output directory: {output_dir}[/blue]")
+    console.print(f"[blue]GPU Available: {'Yes' if gpu_available else 'No (Mock Mode)'}[/blue]")
 
     try:
-        # Run the analysis
-        output_file = process_video_inference(
-            video_id=video_id, interval_seconds=interval, output_dir=str(output_dir)
-        )
+        # Run the appropriate analysis based on GPU availability
+        if gpu_available:
+            output_file = process_video_inference(
+                video_id=video_id, 
+                interval_seconds=interval, 
+                output_dir=str(output_dir)
+            )
+        else:
+            output_file = process_video_inference_mock(
+                video_id=video_id, 
+                interval_seconds=interval, 
+                output_dir=str(output_dir)
+            )
 
         console.print("\n[bold green]✅ Analysis complete![/bold green]")
         console.print(f"[blue]Results saved to: {output_file}[/blue]")

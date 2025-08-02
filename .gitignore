@@ -135,6 +135,7 @@ output/
 results/
 my_results/
 batch_output/
+localdemo/
 
 # CSV files (analysis results and data exports)
 *.csv
