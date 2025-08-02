@@ -27,14 +27,16 @@ def mock_gemma_fire_inference(
     # Simulate inference delay (much faster than real inference)
     time.sleep(random.uniform(0.1, 0.3))
     
-    # Generate random results with some bias towards no fire
-    # 60% chance of no flame, 40% chance of flame
-    has_flame = random.random() < 0.4
+    # Generate random classification with weighted probabilities
+    # 0: 60%, 1: 20%, 2: 15%, 3: 5%
+    rand = random.random()
+    if rand < 0.6:
+        classification = 0  # No flame
+    elif rand < 0.8:
+        classification = 1  # Benign/illusory flame
+    elif rand < 0.95:
+        classification = 2  # Contained real flame
+    else:
+        classification = 3  # Dangerous uncontrolled fire
     
-    # If there's flame, 25% chance it's out of control
-    has_out_of_control_fire = has_flame and random.random() < 0.25
-    
-    return FireDescription(
-        has_flame=has_flame,
-        has_out_of_control_fire=has_out_of_control_fire
-    )
+    return FireDescription(classification=classification)

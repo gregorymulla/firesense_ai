@@ -20,8 +20,17 @@ FastModel = None
 class FireDescription(BaseModel):
     """Schema for structured fire detection output."""
 
-    has_flame: bool
-    has_out_of_control_fire: bool
+    classification: int  # 0, 1, 2, or 3
+
+    @property
+    def has_flame(self) -> bool:
+        """Returns True if any flame is detected (classification > 0)."""
+        return self.classification > 0
+
+    @property
+    def has_out_of_control_fire(self) -> bool:
+        """Returns True if dangerous uncontrolled fire is detected (classification == 3)."""
+        return self.classification == 3
 
 
 def setup_model() -> tuple[Any, Any]:
@@ -148,26 +157,17 @@ Return nothing except that single digit.
 
     full_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
 
-    # Extract JSON from the response
-    # Try to find JSON between ```json markers first
-    json_start = full_text.find("```json")
-    json_end = full_text.rfind("```")
+    # Extract the single digit from the response
+    # Look for the last occurrence of a digit 0-3 in the response
+    classification = None
+    for char in reversed(full_text):
+        if char in '0123':
+            classification = int(char)
+            break
 
-    if json_start != -1 and json_end != -1 and json_start < json_end:
-        json_str = full_text[json_start + len("```json") : json_end].strip()
-    else:
-        # Try to find raw JSON
-        json_start = full_text.find("{")
-        json_end = full_text.rfind("}") + 1
-        if json_start != -1 and json_end > json_start:
-            json_str = full_text[json_start:json_end]
-        else:
-            json_str = full_text
+    if classification is None:
+        # If no valid digit found, default to 0 (no flame)
+        print(f"Warning: No valid classification digit found in model output: {full_text}")
+        classification = 0
 
-    try:
-        data = json.loads(json_str)
-        return FireDescription(**data)
-    except (json.JSONDecodeError, ValidationError) as err:
-        # Return a default response if parsing fails
-        print(f"Warning: Failed to parse model output as JSON: {err}")
-        return FireDescription(has_flame=False, has_out_of_control_fire=False)
+    return FireDescription(classification=classification)

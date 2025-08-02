@@ -69,6 +69,7 @@ def process_video_inference_mock(
                 "inference": {
                     "has_flame": fire_report.has_flame,
                     "has_out_of_control_fire": fire_report.has_out_of_control_fire,
+                    "classification": fire_report.classification,  # Include raw classification for transparency
                     "is_mock": True,  # Flag to indicate this is mock data
                 },
                 "inference_time_seconds": round(elapsed_time, 3),
@@ -76,8 +77,13 @@ def process_video_inference_mock(
             inference_results.append(result)
 
             # Print result
-            print(f"  - Has flame (mock): {fire_report.has_flame}")
-            print(f"  - Out of control (mock): {fire_report.has_out_of_control_fire}")
+            classification_labels = {
+                0: "No flame",
+                1: "Benign/illusory flame",
+                2: "Contained real flame",
+                3: "Dangerous uncontrolled fire"
+            }
+            print(f"  - Classification (mock): {fire_report.classification} ({classification_labels.get(fire_report.classification, 'Unknown')})")
             print(f"  - Mock inference time: {elapsed_time:.3f}s")
 
         except Exception as e:
@@ -90,7 +96,8 @@ def process_video_inference_mock(
                     "inference": {
                         "has_flame": False,
                         "has_out_of_control_fire": False,
-                        "description": f"Error: {e!s}",
+                        "classification": 0,  # Default to 0 (no flame) on error
+                        "error": f"Error: {e!s}",
                         "is_mock": True,
                     },
                     "inference_time_seconds": 0.0,

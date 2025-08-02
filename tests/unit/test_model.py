@@ -8,14 +8,25 @@ class TestModelFunctions:
 
     def test_fire_description_schema(self):
         """Test FireDescription schema creation."""
-        # Test valid creation
-        desc = FireDescription(has_flame=True, has_out_of_control_fire=False)
-        assert desc.has_flame is True
-        assert desc.has_out_of_control_fire is False
+        # Test valid creation with different classifications
+        desc0 = FireDescription(classification=0)
+        assert desc0.classification == 0
+        assert desc0.has_flame is False
+        assert desc0.has_out_of_control_fire is False
+        
+        desc1 = FireDescription(classification=1)
+        assert desc1.classification == 1
+        assert desc1.has_flame is True
+        assert desc1.has_out_of_control_fire is False
+        
+        desc3 = FireDescription(classification=3)
+        assert desc3.classification == 3
+        assert desc3.has_flame is True
+        assert desc3.has_out_of_control_fire is True
 
     def test_fire_description_json(self):
         """Test FireDescription JSON serialization."""
-        desc = FireDescription(has_flame=False, has_out_of_control_fire=True)
+        desc = FireDescription(classification=2)
         json_data = desc.model_dump()
 
-        assert json_data == {"has_flame": False, "has_out_of_control_fire": True}
+        assert json_data == {"classification": 2}
