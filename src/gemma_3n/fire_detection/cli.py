@@ -28,15 +28,19 @@ def demo(
     no_browser: bool = typer.Option(
         False, "--no-browser", help="Don't open browser automatically"
     ),
+    local: bool = typer.Option(
+        False, "--local", help="Use localdemo folder instead of demo folder"
+    ),
 ) -> None:
     """Launch demo UI for pre-analyzed fire detection results."""
 
     console.print("[bold green]🔥 Launching Fire Detection Demo[/bold green]")
     console.print(f"[blue]Video ID: {video_id}[/blue]")
+    console.print(f"[blue]Demo folder: {'localdemo' if local else 'demo'}[/blue]")
 
     # Verify demo files exist
     project_root = Path(__file__).parent.parent.parent.parent
-    demo_dir = project_root / "demo"
+    demo_dir = project_root / ("localdemo" if local else "demo")
     demo_file = demo_dir / f"{video_id}.json"
 
     if not demo_file.exists():
@@ -56,6 +60,9 @@ def demo(
 
     # Start FastAPI server
     console.print(f"[blue]Starting API server on port {api_port}...[/blue]")
+    # Set environment variable for demo server to know which folder to use
+    env = os.environ.copy()
+    env["DEMO_LOCAL_MODE"] = "1" if local else "0"
     api_process = subprocess.Popen(
         [
             sys.executable,
@@ -67,7 +74,8 @@ def demo(
             "--host",
             "0.0.0.0",
             "--reload",
-        ]
+        ],
+        env=env
     )
 
     # Start React dev server

@@ -1,5 +1,6 @@
 """FastAPI server for serving fire detection demo data."""
 
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -24,19 +25,23 @@ app.add_middleware(
 # Get the project root directory
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 
+# Check if we should use localdemo folder
+USE_LOCAL_DEMO = os.environ.get("DEMO_LOCAL_MODE", "0") == "1"
+DEMO_FOLDER = "localdemo" if USE_LOCAL_DEMO else "demo"
+
 
 @app.get("/api/demo/{video_id}")
 async def get_demo(video_id: str) -> FileResponse:
     """Serve the JSON file for the specified video_id."""
-    demo_file = PROJECT_ROOT / "demo" / f"{video_id}.json"
+    demo_file = PROJECT_ROOT / DEMO_FOLDER / f"{video_id}.json"
 
     if not demo_file.exists():
         # List available demos for helpful error message
-        demo_dir = PROJECT_ROOT / "demo"
-        available_demos = [f.stem for f in demo_dir.glob("*.json")]
+        demo_dir = PROJECT_ROOT / DEMO_FOLDER
+        available_demos = [f.stem for f in demo_dir.glob("*.json")] if demo_dir.exists() else []
         raise HTTPException(
             status_code=404,
-            detail=f"Demo file not found: {video_id}.json. Available demos: {', '.join(available_demos)}",
+            detail=f"Demo file not found: {video_id}.json in {DEMO_FOLDER} folder. Available demos: {', '.join(available_demos)}",
         )
 
     # Return the JSON file directly
@@ -44,7 +49,7 @@ async def get_demo(video_id: str) -> FileResponse:
 
 
 # Serve static video files from demo/videos directory
-videos_dir = PROJECT_ROOT / "demo" / "videos"
+videos_dir = PROJECT_ROOT / DEMO_FOLDER / "videos"
 if videos_dir.exists():
     app.mount("/demo/videos", StaticFiles(directory=str(videos_dir)), name="videos")
 else:
@@ -54,7 +59,7 @@ else:
 @app.get("/health")
 async def health_check() -> dict[str, str]:
     """Health check endpoint."""
-    return {"status": "healthy", "service": "fire-detection-demo"}
+    return {"status": "healthy", "service": "fire-detection-demo", "demo_folder": DEMO_FOLDER}
 
 
 if __name__ == "__main__":
