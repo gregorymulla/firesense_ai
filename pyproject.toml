@@ -1,6 +1,6 @@
 [project]
 name = "firesense"
-version = "0.8.2"
+version = "0.8.3"
 description = "AI-powered fire detection system using Gemma 3N E4B vision model"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -51,6 +51,7 @@ dependencies = [
     # Demo server dependencies
     "fastapi>=0.109.0",
     "uvicorn>=0.25.0",
+    "pyngrok>=7.2.12",
 ]
 
 [project.optional-dependencies]

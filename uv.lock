@@ -615,7 +615,7 @@ wheels = [
 
 [[package]]
 name = "firesense"
-version = "0.8.2"
+version = "0.8.3"
 source = { editable = "." }
 dependencies = [
     { name = "accelerate" },
@@ -630,6 +630,7 @@ dependencies = [
     { name = "protobuf" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
+    { name = "pyngrok" },
     { name = "rich" },
     { name = "sentencepiece" },
     { name = "timm" },
@@ -693,6 +694,7 @@ requires-dist = [
     { name = "protobuf", specifier = ">=6.31.1" },
     { name = "pydantic", specifier = ">=2.5.0" },
     { name = "pydantic-settings", specifier = ">=2.0.0" },
+    { name = "pyngrok", specifier = ">=7.2.12" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.4.0" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.21.0" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1.0" },
@@ -2351,6 +2353,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/55/b3/6d2b3f149bc5413b0a29761c2c5832d8ce904a1d7f621e86616d96f505cc/pymdown_extensions-10.16.1.tar.gz", hash = "sha256:aace82bcccba3efc03e25d584e6a22d27a8e17caa3f4dd9f207e49b787aa9a91", size = 853277, upload-time = "2025-07-28T16:19:34.167Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e4/06/43084e6cbd4b3bc0e80f6be743b2e79fbc6eed8de9ad8c629939fa55d972/pymdown_extensions-10.16.1-py3-none-any.whl", hash = "sha256:d6ba157a6c03146a7fb122b2b9a121300056384eafeec9c9f9e584adfdb2a32d", size = 266178, upload-time = "2025-07-28T16:19:31.401Z" },
+]
+
+[[package]]
+name = "pyngrok"
+version = "7.2.12"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/64/7a/6f96513de7cadd81858b4e2bb8a31052b552cb21baeec305a5d0cac94a25/pyngrok-7.2.12.tar.gz", hash = "sha256:1cce4d785619b8064bca7e6f6c8a3454d69aaa5fcff0f35bd05aa81254ce12ff", size = 45075, upload-time = "2025-07-09T19:17:54.391Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/81/121c612fed8c247e7703cfcc5c3a04389a575e95bacbc316c0d371eb6757/pyngrok-7.2.12-py3-none-any.whl", hash = "sha256:a32c3146214e5a693b809e7cea705e29343050fee7047195f50244f4b8ba11e3", size = 26049, upload-time = "2025-07-09T19:17:53.145Z" },
 ]
 
 [[package]]

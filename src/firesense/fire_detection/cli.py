@@ -31,6 +31,9 @@ def demo(
     local: bool = typer.Option(
         False, "--local", help="Use localdemo folder instead of demo folder"
     ),
+    ngrok: bool = typer.Option(
+        False, "--ngrok", help="Expose server via ngrok tunnel for remote access"
+    ),
 ) -> None:
     """Launch demo UI for pre-analyzed fire detection results."""
 
@@ -77,14 +80,40 @@ def demo(
     # Wait for server to start
     time.sleep(2)
 
+    # Set up ngrok tunnel if requested
+    public_url = None
+    ngrok_tunnel = None
+    if ngrok:
+        try:
+            from pyngrok import ngrok as pyngrok
+            from pyngrok.conf import PyngrokConfig
+            
+            # Configure pyngrok to not open browser
+            pyngrok_config = PyngrokConfig(monitor_thread=False)
+            
+            console.print("[blue]Creating ngrok tunnel...[/blue]")
+            ngrok_tunnel = pyngrok.connect(port, pyngrok_config=pyngrok_config)
+            public_url = ngrok_tunnel.public_url
+            console.print(f"[green]🌐 Ngrok tunnel created: {public_url}[/green]")
+        except Exception as e:
+            console.print(f"[yellow]⚠️  Could not create ngrok tunnel: {e}[/yellow]")
+            console.print("[yellow]Continuing with local server only...[/yellow]")
+            ngrok = False  # Disable ngrok for cleanup
+
     # Open browser
     if not no_browser:
-        url = f"http://localhost:{port}?id={video_id}"
-        console.print(f"[blue]Opening browser at: {url}[/blue]")
+        if public_url:
+            url = f"{public_url}?id={video_id}"
+            console.print(f"[blue]Opening browser at: {url}[/blue]")
+        else:
+            url = f"http://localhost:{port}?id={video_id}"
+            console.print(f"[blue]Opening browser at: {url}[/blue]")
         webbrowser.open(url)
 
     console.print("\n[bold yellow]Demo server running![/bold yellow]")
-    console.print(f"[blue]🌐 Server: http://localhost:{port}[/blue]")
+    console.print(f"[blue]🌐 Local: http://localhost:{port}[/blue]")
+    if public_url:
+        console.print(f"[blue]🌍 Public: {public_url}[/blue]")
     console.print(f"[blue]📹 Video: {video_id}[/blue]")
     console.print("\n[dim]Press Ctrl+C to stop the server[/dim]")
 
@@ -95,6 +124,16 @@ def demo(
     except KeyboardInterrupt:
         console.print("\n[yellow]Shutting down server...[/yellow]")
     finally:
+        # Cleanup ngrok tunnel
+        if ngrok and ngrok_tunnel:
+            try:
+                from pyngrok import ngrok as pyngrok
+                console.print("[yellow]Closing ngrok tunnel...[/yellow]")
+                pyngrok.disconnect(ngrok_tunnel.public_url)
+                pyngrok.kill()
+            except Exception:
+                pass  # Ignore errors during cleanup
+        
         # Cleanup process
         if server_process.poll() is None:
             server_process.terminate()
