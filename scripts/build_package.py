@@ -51,6 +51,15 @@ def build_demo_ui():
         sys.exit(1)
     
     print("✅ Demo UI built successfully")
+    
+    # Copy built UI files to package source
+    print("📂 Copying UI files to package...")
+    src_ui_dir = Path("src/firesense/demo-ui")
+    if src_ui_dir.exists():
+        shutil.rmtree(src_ui_dir)
+    shutil.copytree(dist_dir, src_ui_dir)
+    print("✅ UI files copied to package")
+    
     return True
 
 def build_python_package():

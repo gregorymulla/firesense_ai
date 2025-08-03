@@ -615,7 +615,7 @@ wheels = [
 
 [[package]]
 name = "firesense"
-version = "0.8.4"
+version = "0.8.8"
 source = { editable = "." }
 dependencies = [
     { name = "accelerate" },

@@ -45,20 +45,77 @@ def find_ui_directory() -> Optional[Path]:
     
     # Try to find UI files in the installed package
     try:
-        # Check common installation locations
-        possible_paths = [
+        import site
+        import sysconfig
+        
+        # Get all possible installation paths
+        possible_paths = []
+        
+        # Virtual environment paths
+        if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+            # In a virtual environment
+            venv_root = Path(sys.prefix)
+            possible_paths.extend([
+                venv_root / "share" / "firesense" / "demo-ui",
+                venv_root / "local" / "share" / "firesense" / "demo-ui",
+            ])
+        
+        # Package directory paths (where demo-ui is included with the package)
+        possible_paths.extend([
+            # Direct package location
+            Path(__file__).parent.parent / "demo-ui",
+            # Alternative package locations
+            Path(__file__).parent.parent.parent / "demo-ui",
+            # Package directory (for editable installs)
+            Path(__file__).parent.parent.parent.parent / "demo-ui" / "dist",
+        ])
+        
+        # Standard installation paths
+        possible_paths.extend([
             # Site-packages data directory
             Path(sys.prefix) / "share" / "firesense" / "demo-ui",
             # Local share directory
             Path(sys.prefix) / "local" / "share" / "firesense" / "demo-ui",
-            # Package directory (for editable installs)
-            Path(__file__).parent.parent.parent.parent / "demo-ui" / "dist",
+            # User-specific installation
+            Path(site.USER_BASE) / "share" / "firesense" / "demo-ui",
+            # System-wide locations
+            Path("/usr/share") / "firesense" / "demo-ui",
+            Path("/usr/local/share") / "firesense" / "demo-ui",
             # Alternative package data location
             Path(sys.prefix) / "firesense" / "demo-ui",
-        ]
+        ])
+        
+        # Add site-packages specific paths
+        for site_dir in site.getsitepackages():
+            possible_paths.extend([
+                Path(site_dir).parent.parent / "share" / "firesense" / "demo-ui",
+                Path(site_dir) / "firesense" / "share" / "demo-ui",
+                Path(site_dir) / "firesense" / "demo-ui",
+            ])
+        
+        # Try to find through the installed package location
+        try:
+            import firesense
+            package_path = Path(firesense.__file__).parent
+            possible_paths.append(package_path / "demo-ui")
+        except:
+            pass
+        
+        # Add paths from sysconfig
+        data_path = sysconfig.get_path('data')
+        if data_path:
+            possible_paths.append(Path(data_path) / "share" / "firesense" / "demo-ui")
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_paths = []
+        for path in possible_paths:
+            if path not in seen:
+                seen.add(path)
+                unique_paths.append(path)
         
         print("Searching for UI files in installed locations...")
-        for path in possible_paths:
+        for path in unique_paths:
             print(f"  Checking: {path}")
             if path.exists() and (path / "index.html").exists():
                 print(f"✓ Found UI files at: {path}")
@@ -70,8 +127,8 @@ def find_ui_directory() -> Optional[Path]:
     print("✗ UI files not found in any expected location!")
     print("  Expected locations checked:")
     print(f"  - Local dev: {local_ui_dir}")
-    if 'possible_paths' in locals():
-        for path in possible_paths:
+    if 'unique_paths' in locals():
+        for path in unique_paths:
             print(f"  - {path}")
     return None
 
@@ -93,8 +150,8 @@ if UI_DIR and UI_DIR.exists():
 
 
 @app.get("/api/demo/{video_id}")
-async def get_demo(video_id: str) -> FileResponse:
-    """Serve the JSON file for the specified video_id."""
+async def get_demo(video_id: str):
+    """Serve the JSON file for the specified video_id with data transformation."""
     demo_file = PROJECT_ROOT / DEMO_FOLDER / f"{video_id}.json"
 
     if not demo_file.exists():
@@ -116,8 +173,44 @@ async def get_demo(video_id: str) -> FileResponse:
             content=error_detail
         )
 
-    # Return the JSON file directly
-    return FileResponse(demo_file, media_type="application/json")
+    # Read and transform the JSON data
+    try:
+        import json
+        with open(demo_file, 'r') as f:
+            data = json.load(f)
+        
+        # Transform inference_results to detections format expected by the React app
+        if "inference_results" in data and "detections" not in data:
+            detections = []
+            for result in data["inference_results"]:
+                detection = {
+                    "timestamp": result["timestamp"],
+                    "frame_number": result["frame_number"],
+                    "filename": result["filename"],
+                    "fire_detected": result["inference"]["has_flame"],
+                    "is_dangerous": result["inference"]["has_out_of_control_fire"],
+                    "classification": result["inference"]["classification"],
+                    "inference_time_seconds": result.get("inference_time_seconds", 0)
+                }
+                detections.append(detection)
+            data["detections"] = detections
+        
+        # Ensure video_url is set
+        if "video_url" not in data and "url" in data:
+            data["video_url"] = data["url"]
+        
+        return JSONResponse(content=data)
+        
+    except Exception as e:
+        error_detail = {
+            "error": "Failed to read or transform demo file",
+            "video_id": video_id,
+            "exception": str(e)
+        }
+        return JSONResponse(
+            status_code=500,
+            content=error_detail
+        )
 
 
 # Serve static video files from demo/videos directory
