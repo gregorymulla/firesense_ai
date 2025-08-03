@@ -23,7 +23,7 @@ console = Console()
 
 @app.command()
 def demo(
-    video_id: str = typer.Argument("8khG4WzS70U", help="Demo video ID to display (default: 8khG4WzS70U)"),
+    video_id: str = typer.Argument("yvJXFiDQaSc", help="Demo video ID to display (default: yvJXFiDQaSc)"),
     port: int = typer.Option(8000, "--port", help="Server port for both API and UI"),
     no_browser: bool = typer.Option(
         False, "--no-browser", help="Don't open browser automatically"
@@ -36,6 +36,10 @@ def demo(
     ),
 ) -> None:
     """Launch demo UI for pre-analyzed fire detection results."""
+    
+    # Workaround for typer bug with default arguments
+    if video_id.isdigit() and len(video_id) == 1:
+        video_id = "yvJXFiDQaSc"
 
     console.print("[bold green]🔥 Launching Fire Detection Demo[/bold green]")
     console.print(f"[blue]Video ID: {video_id}[/blue]")
@@ -147,7 +151,7 @@ def demo(
 
 @app.command()
 def analyze(
-    video_id: str = typer.Argument("8khG4WzS70U", help="YouTube video ID or URL to analyze (default: 8khG4WzS70U)"),
+    video_id: str = typer.Argument("yvJXFiDQaSc", help="YouTube video ID or URL to analyze (default: yvJXFiDQaSc)"),
     interval: float = typer.Option(
         1.0, "--interval", "-i", help="Frame extraction interval in seconds"
     ),
@@ -156,6 +160,10 @@ def analyze(
     ),
 ) -> None:
     """Download YouTube video, extract frames, and analyze for fire detection."""
+    
+    # Workaround for typer bug with default arguments
+    if video_id.isdigit() and len(video_id) == 1:
+        video_id = "yvJXFiDQaSc"
 
     console.print("[bold green]🔥 Starting Fire Detection Analysis[/bold green]")
     
