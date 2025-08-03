@@ -22,8 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Get the project root directory
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
+# Use current working directory
+PROJECT_ROOT = Path.cwd()
 
 # Check if we should use localdemo folder
 USE_LOCAL_DEMO = os.environ.get("DEMO_LOCAL_MODE", "0") == "1"

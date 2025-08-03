@@ -39,8 +39,7 @@ def demo(
     console.print(f"[blue]Demo folder: {'localdemo' if local else 'demo'}[/blue]")
 
     # Verify demo files exist
-    project_root = Path(__file__).parent.parent.parent.parent
-    demo_dir = project_root / ("localdemo" if local else "demo")
+    demo_dir = Path.cwd() / ("localdemo" if local else "demo")
     demo_file = demo_dir / f"{video_id}.json"
 
     if not demo_file.exists():
@@ -53,10 +52,8 @@ def demo(
             console.print("[red]Demo directory not found![/red]")
         raise typer.Exit(1)
 
-    # Change to project root for proper path resolution
+    # Use current working directory
     import os
-
-    os.chdir(project_root)
 
     # Start FastAPI server
     console.print(f"[blue]Starting API server on port {api_port}...[/blue]")
@@ -79,7 +76,9 @@ def demo(
     )
 
     # Start React dev server
-    ui_dir = project_root / "demo-ui"
+    # demo-ui is in the package installation directory
+    package_root = Path(__file__).parent.parent.parent.parent
+    ui_dir = package_root / "demo-ui"
     if not ui_dir.exists():
         console.print(f"[red]Error: Demo UI not found at {ui_dir}[/red]")
         api_process.terminate()
