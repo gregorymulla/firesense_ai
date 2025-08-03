@@ -94,7 +94,7 @@ def gemma_fire_inference(
 ) -> FireDescription:
     """Run fire detection inference on an image."""
     system_prompt = """
-    You are **FireWatch**, a vision-language model for real-time fire detection.
+    You are **FireSense**, a vision-language model for real-time fire detection.
 
 On every image you receive, output **one digit only** (no words, no punctuation):
 
