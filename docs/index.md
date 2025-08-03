@@ -42,8 +42,8 @@ Our system provides advanced fire detection capabilities with:
 ## Quick Example
 
 ```python
-from gemma_3n.fire_detection.config import FireDetectionConfig
-from gemma_3n.fire_detection.detector import FireDetector
+from firesense.fire_detection.config import FireDetectionConfig
+from firesense.fire_detection.detector import FireDetector
 from pathlib import Path
 
 # Create fire detection configuration

@@ -21,10 +21,10 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
-from gemma_3n.fire_detection.config import FireDetectionConfig
-from gemma_3n.fire_detection.models.gemma_e4b import Gemma3NE4BInterface
-from gemma_3n.fire_detection.processing.video import VideoProcessor
-from gemma_3n.fire_detection.vision.processor import VisionProcessor
+from firesense.fire_detection.config import FireDetectionConfig
+from firesense.fire_detection.models.gemma_e4b import Gemma3NE4BInterface
+from firesense.fire_detection.processing.video import VideoProcessor
+from firesense.fire_detection.vision.processor import VisionProcessor
 
 
 async def analyze_video_frame_by_frame(use_quantization=False):
@@ -47,7 +47,7 @@ async def analyze_video_frame_by_frame(use_quantization=False):
     print(f"⚙️  Quantization: {'Enabled' if use_quantization else 'Disabled'}\n")
     
     # Create configuration with flexible quantization  
-    from gemma_3n.fire_detection.config import Gemma3NE4BConfig
+    from firesense.fire_detection.config import Gemma3NE4BConfig
     
     model_config = Gemma3NE4BConfig(
         model_path="google/gemma-2-2b-it",

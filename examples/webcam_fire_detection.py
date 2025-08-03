@@ -32,10 +32,10 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from gemma_3n.fire_detection.config import FireDetectionConfig
-from gemma_3n.fire_detection.models.gemma_e4b import Gemma3NE4BInterface
-from gemma_3n.fire_detection.vision.processor import VisionProcessor
-from gemma_3n.fire_detection.processing.video import FrameData
+from firesense.fire_detection.config import FireDetectionConfig
+from firesense.fire_detection.models.gemma_e4b import Gemma3NE4BInterface
+from firesense.fire_detection.vision.processor import VisionProcessor
+from firesense.fire_detection.processing.video import FrameData
 
 
 class WebcamFireDetector:

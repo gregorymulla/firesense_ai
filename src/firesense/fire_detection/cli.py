@@ -5,6 +5,7 @@ import sys
 import time
 import webbrowser
 from pathlib import Path
+import importlib.resources
 
 import typer
 from rich.console import Console
@@ -22,9 +23,8 @@ console = Console()
 
 @app.command()
 def demo(
-    video_id: str = typer.Argument(..., help="Demo video ID to display"),
-    api_port: int = typer.Option(8000, "--api-port", help="FastAPI server port"),
-    ui_port: int = typer.Option(5173, "--ui-port", help="React dev server port"),
+    video_id: str = typer.Argument("8khG4WzS70U", help="Demo video ID to display (default: 8khG4WzS70U)"),
+    port: int = typer.Option(8000, "--port", help="Server port for both API and UI"),
     no_browser: bool = typer.Option(
         False, "--no-browser", help="Don't open browser automatically"
     ),
@@ -55,91 +55,60 @@ def demo(
     # Use current working directory
     import os
 
-    # Start FastAPI server
-    console.print(f"[blue]Starting API server on port {api_port}...[/blue]")
+    # Start FastAPI server with UI serving
+    console.print(f"[blue]Starting demo server on port {port}...[/blue]")
     # Set environment variable for demo server to know which folder to use
     env = os.environ.copy()
     env["DEMO_LOCAL_MODE"] = "1" if local else "0"
-    api_process = subprocess.Popen(
+    server_process = subprocess.Popen(
         [
             sys.executable,
             "-m",
             "uvicorn",
-            "src.gemma_3n.fire_detection.demo_server:app",
+            "firesense.fire_detection.demo_server:app",
             "--port",
-            str(api_port),
+            str(port),
             "--host",
             "0.0.0.0",
-            "--reload",
         ],
         env=env
     )
 
-    # Start React dev server
-    # demo-ui is in the package installation directory
-    package_root = Path(__file__).parent.parent.parent.parent
-    ui_dir = package_root / "demo-ui"
-    if not ui_dir.exists():
-        console.print(f"[red]Error: Demo UI not found at {ui_dir}[/red]")
-        api_process.terminate()
-        raise typer.Exit(1)
-
-    # Check if node_modules exists
-    if not (ui_dir / "node_modules").exists():
-        console.print("[yellow]Installing demo UI dependencies...[/yellow]")
-        install_process = subprocess.run(
-            ["npm", "install"], cwd=ui_dir, capture_output=True, text=True
-        )
-        if install_process.returncode != 0:
-            console.print(
-                f"[red]Failed to install dependencies: {install_process.stderr}[/red]"
-            )
-            api_process.terminate()
-            raise typer.Exit(1)
-        console.print("[green]Dependencies installed successfully[/green]")
-
-    console.print(f"[blue]Starting UI server on port {ui_port}...[/blue]")
-    ui_process = subprocess.Popen(
-        ["npm", "run", "dev", "--", "--port", str(ui_port)], cwd=ui_dir
-    )
-
-    # Wait for servers to start
-    time.sleep(3)
+    # Wait for server to start
+    time.sleep(2)
 
     # Open browser
     if not no_browser:
-        url = f"http://localhost:{ui_port}?id={video_id}"
+        url = f"http://localhost:{port}?id={video_id}"
         console.print(f"[blue]Opening browser at: {url}[/blue]")
         webbrowser.open(url)
 
-    console.print("\n[bold yellow]Demo servers running![/bold yellow]")
-    console.print(f"[blue]📡 API: http://localhost:{api_port}[/blue]")
-    console.print(f"[blue]🖥️  UI: http://localhost:{ui_port}[/blue]")
+    console.print("\n[bold yellow]Demo server running![/bold yellow]")
+    console.print(f"[blue]🌐 Server: http://localhost:{port}[/blue]")
     console.print(f"[blue]📹 Video: {video_id}[/blue]")
-    console.print("\n[dim]Press Ctrl+C to stop both servers[/dim]")
+    console.print("\n[dim]Press Ctrl+C to stop the server[/dim]")
 
     try:
-        # Wait for either process to exit
-        while api_process.poll() is None and ui_process.poll() is None:
+        # Wait for process to exit
+        while server_process.poll() is None:
             time.sleep(1)
     except KeyboardInterrupt:
-        console.print("\n[yellow]Shutting down servers...[/yellow]")
+        console.print("\n[yellow]Shutting down server...[/yellow]")
     finally:
-        # Cleanup both processes
-        for process in [api_process, ui_process]:
-            if process.poll() is None:
-                process.terminate()
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    process.kill()
+        # Cleanup process
+        if server_process.poll() is None:
+            server_process.terminate()
+            try:
+                server_process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                server_process.kill()
 
-        console.print("[green]✅ Demo servers stopped[/green]")
+        console.print("[green]✅ Demo server stopped[/green]")
 
 
 @app.command()
 def analyze(
-    video_id: str = typer.Argument(..., help="YouTube video ID or URL to analyze"),
+    video_id: str = typer.Argument("8khG4WzS70U", help="YouTube video ID or URL to analyze (default: 8khG4WzS70U)"),
     interval: float = typer.Option(
         1.0, "--interval", "-i", help="Frame extraction interval in seconds"
     ),

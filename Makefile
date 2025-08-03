@@ -1,4 +1,4 @@
-.PHONY: help install dev test lint format type-check clean docs run
+.PHONY: help install dev test lint format type-check clean docs run build-ui build publish
 
 help:
 	@echo "Available commands:"
@@ -68,10 +68,18 @@ fix: format lint-fix
 # Full check
 check: format lint type-check test
 
+# Build demo UI
+build-ui:
+	@echo "Building demo UI..."
+	cd demo-ui && npm install && npm run build
+
+# Build package (includes UI)
+build:
+	@echo "Building firesense package..."
+	uv run python scripts/build_package.py
+
 # Publishing commands
-publish:
-	@echo "Building package..."
-	uv run python -m build
+publish: build
 	@echo "Publishing to PyPI..."
 	uv run python scripts/publish.py
 

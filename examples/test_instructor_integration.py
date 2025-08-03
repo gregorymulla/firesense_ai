@@ -19,9 +19,9 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
 from PIL import Image
-from gemma_3n.fire_detection.config import FireDetectionConfig
-from gemma_3n.fire_detection.models.gemma_e4b import Gemma3NE4BInterface
-from gemma_3n.fire_detection.vision.processor import VisionProcessor
+from firesense.fire_detection.config import FireDetectionConfig
+from firesense.fire_detection.models.gemma_e4b import Gemma3NE4BInterface
+from firesense.fire_detection.vision.processor import VisionProcessor
 
 
 async def test_instructor_integration():

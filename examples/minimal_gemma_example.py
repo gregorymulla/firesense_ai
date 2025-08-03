@@ -21,8 +21,8 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-from gemma_3n.fire_detection.config import FireDetectionConfig, Gemma3NE4BConfig
-from gemma_3n.fire_detection.models.gemma_e4b import Gemma3NE4BInterface
+from firesense.fire_detection.config import FireDetectionConfig, Gemma3NE4BConfig
+from firesense.fire_detection.models.gemma_e4b import Gemma3NE4BInterface
 
 
 async def describe_bee_image():

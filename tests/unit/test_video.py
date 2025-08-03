@@ -2,7 +2,7 @@
 
 import pytest
 
-from gemma_3n.fire_detection.video import validate_video_id
+from firesense.fire_detection.video import validate_video_id
 
 
 class TestVideoFunctions:

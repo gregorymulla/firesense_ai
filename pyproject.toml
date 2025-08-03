@@ -1,6 +1,6 @@
 [project]
 name = "firesense"
-version = "0.8.1"
+version = "0.8.2"
 description = "AI-powered fire detection system using Gemma 3N E4B vision model"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -82,14 +82,17 @@ Repository = "https://github.com/gregorymulla/firesense_ai"
 Issues = "https://github.com/gregorymulla/firesense_ai/issues"
 
 [project.scripts]
-firesense = "gemma_3n.__main__:main"
+firesense = "firesense.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/gemma_3n"]
+packages = ["src/firesense"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"demo-ui/dist" = "share/firesense/demo-ui"
 
 [tool.uv]
 package = true
@@ -136,7 +139,7 @@ minversion = "7.0"
 addopts = [
     "-ra",
     "--strict-markers",
-    "--cov=gemma_3n",
+    "--cov=firesense",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]
@@ -144,7 +147,7 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 
 [tool.coverage.run]
-source = ["src/gemma_3n"]
+source = ["src/firesense"]
 omit = ["*/tests/*", "*/__init__.py"]
 
 [tool.coverage.report]

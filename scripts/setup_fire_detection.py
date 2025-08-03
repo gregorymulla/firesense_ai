@@ -202,8 +202,8 @@ def run_basic_test():
     
     try:
         # Test imports
-        from gemma_3n.fire_detection.config import FireDetectionConfig
-        from gemma_3n.fire_detection.processing.video import VideoProcessor
+        from firesense.fire_detection.config import FireDetectionConfig
+        from firesense.fire_detection.processing.video import VideoProcessor
         
         # Test configuration
         config = FireDetectionConfig()
@@ -236,7 +236,7 @@ def display_usage_instructions():
    [code]uv run gemma-3n fire-detect sample_video.mp4[/code]
    
    Or use the CLI directly:
-   [code]python -m gemma_3n.fire_detection.cli analyze sample_video.mp4[/code]
+   [code]python -m firesense.fire_detection.cli analyze sample_video.mp4[/code]
 
 3. [cyan]Try the example script[/cyan]
    [code]python examples/fire_detection_example.py[/code]
@@ -251,7 +251,7 @@ def display_usage_instructions():
 
 [bold]Documentation:[/bold]
 - Fire Detection README: [yellow]README_FIRE_DETECTION.md[/yellow]
-- CLI help: [code]python -m gemma_3n.fire_detection.cli --help[/code]
+- CLI help: [code]python -m firesense.fire_detection.cli --help[/code]
 """,
         title="🔥 Fire Detection System",
         border_style="green"

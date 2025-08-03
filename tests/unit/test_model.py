@@ -1,6 +1,6 @@
 """Unit tests for model functions."""
 
-from gemma_3n.fire_detection.model import FireDescription
+from firesense.fire_detection.model import FireDescription
 
 
 class TestModelFunctions:

@@ -1,6 +1,6 @@
 """Main entry point for gemma-3n CLI."""
 
-from gemma_3n.fire_detection.cli import app
+from firesense.fire_detection.cli import app
 
 
 def main() -> None:

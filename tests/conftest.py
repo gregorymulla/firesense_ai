@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from rich.console import Console
 
-from gemma_3n.fire_detection.config import FireDetectionConfig
+from firesense.fire_detection.config import FireDetectionConfig
 
 
 @pytest.fixture
