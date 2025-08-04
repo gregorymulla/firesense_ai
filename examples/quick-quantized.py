@@ -16,12 +16,12 @@ For systems with less memory, consider:
 3. Using smaller vision-language models
 """
 
-import torch
-from transformers import AutoModelForImageTextToText, AutoProcessor, BitsAndBytesConfig
-from PIL import Image
-import requests
 import sys
-import os
+
+import requests
+import torch
+from PIL import Image
+from transformers import AutoModelForImageTextToText, BitsAndBytesConfig
 
 # Check environment
 print("=== Environment Check ===")
@@ -55,7 +55,7 @@ quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_compute_dtype=torch.float16,
     bnb_4bit_quant_type="nf4",
-    bnb_4bit_use_double_quant=True
+    bnb_4bit_use_double_quant=True,
 )
 
 print("\nQuantization settings:")
@@ -67,7 +67,7 @@ print(f"- Double quantization: {quantization_config.bnb_4bit_use_double_quant}")
 print("\n=== Example Code for Loading with Quantization ===")
 print("Here's how you would load the model with quantization on a suitable GPU:")
 
-code_example = '''
+code_example = """
 # Load the model with quantization (requires 10GB+ GPU)
 model = AutoModelForImageTextToText.from_pretrained(
     "google/gemma-3n-e2b-it",
@@ -98,7 +98,7 @@ messages = [
 # Generate response
 output = pipe(text=messages, max_new_tokens=200)
 print(output[0]["generated_text"][-1]["content"])
-'''
+"""
 
 print(code_example)
 
@@ -133,42 +133,47 @@ if gpu_memory >= 10:
             "google/gemma-3n-e2b-it",
             quantization_config=quantization_config,
             device_map="auto",
-            torch_dtype=torch.float16
+            torch_dtype=torch.float16,
         )
-        
+
         # Create pipeline with the quantized model
         print("Creating pipeline...")
         from transformers import pipeline
+
         pipe = pipeline(
             "image-text-to-text",
             model=model,
             tokenizer="google/gemma-3n-e2b-it",
-            torch_dtype=torch.float16
+            torch_dtype=torch.float16,
         )
-        
+
         # Prepare messages in the expected format
         messages = [
-            {"role": "system",
-             "content": [{"type": "text", "text": "You are a helpful assistant."}]},
-            {"role": "user",
-             "content": [
-                 {"type": "image", "image": local_image_path},
-                 {"type": "text", "text": "Describe this image in detail."}
-             ]}
+            {
+                "role": "system",
+                "content": [{"type": "text", "text": "You are a helpful assistant."}],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image", "image": local_image_path},
+                    {"type": "text", "text": "Describe this image in detail."},
+                ],
+            },
         ]
-        
+
         # Generate response
         print("Generating response...")
         output = pipe(text=messages, max_new_tokens=200)
-        
+
         print("\n=== Model Response ===")
         print(output[0]["generated_text"][-1]["content"])
-        
+
         # Show final memory usage
-        print(f"\nFinal GPU Memory Usage:")
+        print("\nFinal GPU Memory Usage:")
         print(f"Allocated: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
         print(f"Reserved: {torch.cuda.memory_reserved() / 1024**3:.2f} GB")
-        
+
     except Exception as e:
         print(f"\nError loading model: {e}")
         print("\nThis is expected if your GPU doesn't have sufficient memory.")
@@ -176,4 +181,4 @@ if gpu_memory >= 10:
 else:
     print("\n=== Skipping Model Loading ===")
     print("Your GPU doesn't meet the minimum memory requirements.")
-    print("Please use one of the alternative options listed above.")    
+    print("Please use one of the alternative options listed above.")

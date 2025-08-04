@@ -1,8 +1,7 @@
-import torch
-from transformers import pipeline
-from PIL import Image
 import requests
-import os
+import torch
+from PIL import Image
+from transformers import pipeline
 
 print("Loading gemma-3n-e2b-it example for Colab...")
 
@@ -47,14 +46,14 @@ try:
         device_map="auto" if device == "cuda" else None,  # Auto device mapping for GPU
     )
     print("Model loaded successfully!")
-    
+
 except RuntimeError as e:
     if "out of memory" in str(e).lower():
         print("GPU out of memory! Falling back to CPU...")
         torch.cuda.empty_cache()  # Clear GPU cache
         device = "cpu"
         torch_dtype = torch.float32
-        
+
         pipe = pipeline(
             "image-text-to-text",
             model="google/gemma-3n-e2b-it",
@@ -68,37 +67,43 @@ except RuntimeError as e:
 
 # Prepare messages
 messages = [
-    {"role": "system",
-     "content": [{"type": "text", "text": "You are a helpful assistant."}]},
-    {"role": "user",
-     "content": [
-         {"type": "image", "image": local_image_path},
-         {"type": "text", "text": "Describe this image in detail."}
-     ]}
+    {
+        "role": "system",
+        "content": [{"type": "text", "text": "You are a helpful assistant."}],
+    },
+    {
+        "role": "user",
+        "content": [
+            {"type": "image", "image": local_image_path},
+            {"type": "text", "text": "Describe this image in detail."},
+        ],
+    },
 ]
 
 # Generate response with memory-efficient settings
 print("Generating response...")
 try:
     output = pipe(
-        text=messages, 
+        text=messages,
         max_new_tokens=100,  # Reduced for memory efficiency
         do_sample=False,  # Disable sampling for deterministic output
     )
-    
+
     print("\nModel response:")
     print(output[0]["generated_text"][-1]["content"])
-    
+
 except Exception as e:
     print(f"Error during generation: {e}")
     print("\nTroubleshooting tips:")
     print("1. Try restarting the runtime and running again")
     print("2. Make sure you have enough RAM/GPU memory")
     print("3. Try using a smaller max_new_tokens value")
-    print("4. Ensure you're logged into HuggingFace if the model requires authentication")
+    print(
+        "4. Ensure you're logged into HuggingFace if the model requires authentication"
+    )
 
 # Clean up to free memory
-if 'pipe' in locals():
+if "pipe" in locals():
     del pipe
     if device == "cuda":
         torch.cuda.empty_cache()

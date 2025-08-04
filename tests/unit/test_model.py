@@ -13,12 +13,12 @@ class TestModelFunctions:
         assert desc0.classification == 0
         assert desc0.has_flame is False
         assert desc0.has_out_of_control_fire is False
-        
+
         desc1 = FireDescription(classification=1)
         assert desc1.classification == 1
         assert desc1.has_flame is True
         assert desc1.has_out_of_control_fire is False
-        
+
         desc3 = FireDescription(classification=3)
         assert desc3.classification == 3
         assert desc3.has_flame is True

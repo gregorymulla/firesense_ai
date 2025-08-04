@@ -8,11 +8,12 @@ Usage:
     uv run examples/ultra_simple_gemma.py
 """
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from PIL import Image
-import requests
 from io import BytesIO
+
+import requests
+import torch
+from PIL import Image
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Hardcoded bee image URL
 image_url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/bee.jpg"
@@ -28,11 +29,15 @@ print("Loading Gemma 2B...")
 tokenizer = AutoTokenizer.from_pretrained("google/gemma-2-2b-it")
 
 # Determine device
-device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+device = (
+    "cuda"
+    if torch.cuda.is_available()
+    else "mps" if torch.backends.mps.is_available() else "cpu"
+)
 model = AutoModelForCausalLM.from_pretrained(
-    "google/gemma-2-2b-it", 
+    "google/gemma-2-2b-it",
     torch_dtype=torch.float16 if device != "cpu" else torch.float32,
-    low_cpu_mem_usage=True
+    low_cpu_mem_usage=True,
 ).to(device)
 
 # Simple prompt
@@ -44,7 +49,9 @@ In the image, I see """
 # Generate description
 inputs = tokenizer(prompt, return_tensors="pt").to(device)
 outputs = model.generate(**inputs, max_new_tokens=100, do_sample=True, top_p=0.9)
-response = tokenizer.decode(outputs[0][len(inputs["input_ids"][0]):], skip_special_tokens=True)
+response = tokenizer.decode(
+    outputs[0][len(inputs["input_ids"][0]) :], skip_special_tokens=True
+)
 
 print("\n📝 Gemma says:")
 print(response)

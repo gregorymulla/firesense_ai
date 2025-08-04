@@ -159,7 +159,7 @@ def analyze(
     interval: float = typer.Option(
         1.0, "--interval", "-i", help="Frame extraction interval in seconds"
     ),
-    output_dir: Path = typer.Option(  # noqa: B008
+    output_dir: Path = typer.Option(
         ".", "--output", "-o", help="Output directory for results"
     ),
 ) -> None:

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Setup script for fire detection system."""
 
-import os
 import sys
 from pathlib import Path
 
@@ -15,20 +14,20 @@ console = Console()
 def check_dependencies():
     """Check if required dependencies are installed."""
     console.print("[bold blue]Checking dependencies...[/bold blue]")
-    
+
     required_packages = [
         ("torch", "torch"),
-        ("transformers", "transformers"), 
+        ("transformers", "transformers"),
         ("opencv-python", "cv2"),
         ("pillow", "PIL"),
         ("numpy", "numpy"),
         ("pydantic", "pydantic"),
         ("typer", "typer"),
-        ("rich", "rich")
+        ("rich", "rich"),
     ]
-    
+
     missing_packages = []
-    
+
     for package_name, import_name in required_packages:
         try:
             __import__(import_name)
@@ -36,12 +35,12 @@ def check_dependencies():
         except ImportError:
             console.print(f"❌ {package_name}")
             missing_packages.append(package_name)
-    
+
     if missing_packages:
         console.print(f"\n[red]Missing packages: {', '.join(missing_packages)}[/red]")
         console.print("Run: [cyan]uv pip install -e '.[dev]'[/cyan]")
         return False
-    
+
     console.print("\n[green]All dependencies installed![/green]")
     return True
 
@@ -49,29 +48,29 @@ def check_dependencies():
 def setup_directories():
     """Create necessary directories."""
     console.print("\n[bold blue]Setting up directories...[/bold blue]")
-    
+
     directories = [
         Path("models/gemma-3n-e4b"),
         Path("output"),
         Path("examples"),
-        Path("data/sample_videos")
+        Path("data/sample_videos"),
     ]
-    
+
     for directory in directories:
         directory.mkdir(parents=True, exist_ok=True)
         console.print(f"📁 Created: {directory}")
-    
+
     console.print("\n[green]Directories created![/green]")
 
 
 def create_model_placeholder():
     """Create model placeholder files."""
     console.print("\n[bold blue]Setting up model placeholder...[/bold blue]")
-    
+
     model_dir = Path("models/gemma-3n-e4b")
-    
+
     # Create config file
-    config_content = '''{
+    config_content = """{
   "model_type": "gemma",
   "model_variant": "gemma-3n-e4b",
   "quantization": "4bit",
@@ -96,10 +95,10 @@ def create_model_placeholder():
   "hidden_dropout": 0.0,
   "torch_dtype": "float16",
   "use_cache": true
-}'''
-    
+}"""
+
     (model_dir / "config.json").write_text(config_content)
-    
+
     # Create README
     readme_content = """# Gemma 3N E4B Model
 
@@ -146,18 +145,20 @@ print('Model loaded successfully!')
 "
 ```
 """
-    
+
     (model_dir / "README.md").write_text(readme_content)
-    
+
     console.print("📄 Created model configuration files")
-    console.print("[yellow]Note: Actual model weights need to be downloaded separately[/yellow]")
+    console.print(
+        "[yellow]Note: Actual model weights need to be downloaded separately[/yellow]"
+    )
 
 
 def create_example_config():
     """Create example configuration file."""
     console.print("\n[bold blue]Creating example configuration...[/bold blue]")
-    
-    config_content = '''{
+
+    config_content = """{
   "model": {
     "model_variant": "gemma-3n-e4b",
     "model_path": "./models/gemma-3n-e4b",
@@ -190,8 +191,8 @@ def create_example_config():
   "device": "auto",
   "debug": false,
   "verbose": false
-}'''
-    
+}"""
+
     Path("examples/fire_detection_config.json").write_text(config_content)
     console.print("📄 Created example configuration file")
 
@@ -199,24 +200,24 @@ def create_example_config():
 def run_basic_test():
     """Run basic system test."""
     console.print("\n[bold blue]Running basic system test...[/bold blue]")
-    
+
     try:
         # Test imports
         from firesense.fire_detection.config import FireDetectionConfig
         from firesense.fire_detection.processing.video import VideoProcessor
-        
+
         # Test configuration
         config = FireDetectionConfig()
         console.print("✅ Configuration loading")
-        
+
         # Test video processor (without actual video)
         video_config = config.video
-        processor = VideoProcessor(video_config)
+        VideoProcessor(video_config)
         console.print("✅ Video processor initialization")
-        
+
         console.print("\n[green]Basic system test passed![/green]")
         return True
-        
+
     except Exception as e:
         console.print(f"\n[red]System test failed: {e}[/red]")
         return False
@@ -234,7 +235,7 @@ def display_usage_instructions():
 
 2. [cyan]Test with a video file[/cyan]
    [code]uv run gemma-3n fire-detect sample_video.mp4[/code]
-   
+
    Or use the CLI directly:
    [code]python -m firesense.fire_detection.cli analyze sample_video.mp4[/code]
 
@@ -254,55 +255,57 @@ def display_usage_instructions():
 - CLI help: [code]python -m firesense.fire_detection.cli --help[/code]
 """,
         title="🔥 Fire Detection System",
-        border_style="green"
+        border_style="green",
     )
-    
+
     console.print(usage_panel)
 
 
 def main():
     """Main setup function."""
-    console.print(Panel.fit(
-        "[bold blue]Fire Detection System Setup[/bold blue]\n"
-        "Setting up the Gemma 3N E4B fire detection system...",
-        border_style="blue"
-    ))
-    
+    console.print(
+        Panel.fit(
+            "[bold blue]Fire Detection System Setup[/bold blue]\n"
+            "Setting up the Gemma 3N E4B fire detection system...",
+            border_style="blue",
+        )
+    )
+
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
         console=console,
     ) as progress:
-        
+
         # Check dependencies
         task1 = progress.add_task("Checking dependencies...", total=None)
         if not check_dependencies():
             progress.update(task1, description="❌ Dependencies check failed")
             sys.exit(1)
         progress.update(task1, description="✅ Dependencies checked")
-        
+
         # Setup directories
         task2 = progress.add_task("Setting up directories...", total=None)
         setup_directories()
         progress.update(task2, description="✅ Directories created")
-        
+
         # Create model placeholder
         task3 = progress.add_task("Setting up model placeholder...", total=None)
         create_model_placeholder()
         progress.update(task3, description="✅ Model placeholder created")
-        
+
         # Create example config
         task4 = progress.add_task("Creating example configuration...", total=None)
         create_example_config()
         progress.update(task4, description="✅ Example configuration created")
-        
+
         # Run basic test
         task5 = progress.add_task("Running system test...", total=None)
         if not run_basic_test():
             progress.update(task5, description="❌ System test failed")
             sys.exit(1)
         progress.update(task5, description="✅ System test passed")
-    
+
     console.print()
     display_usage_instructions()
 
