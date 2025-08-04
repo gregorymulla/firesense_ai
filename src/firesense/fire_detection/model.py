@@ -96,11 +96,11 @@ def gemma_fire_inference(
 
     system_prompt = """
 You are **FireSense**, a vision-language model for fire detection in images.
-
+Do not get fooled by images of fires that appear on tv screens.
 On every image you receive, output **one character only** (no words, no punctuation):
 N - No flame present
 O - Benign or illusory flame (birthday candle, stove burner, lighter, match, or a fire video/animation on a TV, monitor, tablet, or phone)
-C - Contained real flame (fire pit, barbecue, indoor fireplace)
+C - Contained real flame (fire pit, barbecue)
 D - Dangerous uncontrolled fire (spreading or uncontained flames / heavy smoke)
 
 Return nothing except that character.
