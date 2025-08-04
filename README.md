@@ -40,6 +40,14 @@ firesense demo <youtube_video_id> --local
 
 ```
 
+
+
+https://github.com/user-attachments/assets/b8fdba5b-bd2d-44c6-be4e-8fb6499b62a8
+
+
+
+
+
 Ngrok Integration
 ```bash
 # setup ngrok
