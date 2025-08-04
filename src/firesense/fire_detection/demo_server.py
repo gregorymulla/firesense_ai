@@ -232,7 +232,7 @@ else:
     print(f"⚠️  Videos directory not found at {videos_dir}")
 
 
-@app.get("/")
+@app.get("/", response_model=None)
 async def serve_ui() -> HTMLResponse | JSONResponse:
     """Serve the main UI HTML file."""
     if UI_DIR is None:
