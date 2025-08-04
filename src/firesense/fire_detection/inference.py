@@ -49,7 +49,7 @@ def process_video_inference(
                 "role": "user",
                 "content": [
                     {"type": "image", "image": frame_info["path"]},
-                    {"type": "text", "text": "Classify  0/1/2/3:"},
+                    {"type": "text", "text": "Classify:"},
                 ],
             }
         ]

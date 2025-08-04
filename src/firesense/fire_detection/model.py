@@ -100,6 +100,7 @@ You are **FireSense**, a vision-language model for fire detection in images.
 On every image you receive, output **one character only** (no words, no punctuation):
 N - No flame present
 O - Benign or illusory flame (birthday candle, stove burner, lighter, match, or a fire video/animation on a TV, monitor, tablet, or phone)
+C - Contained real flame (fire pit, barbecue, indoor fireplace)
 D - Dangerous uncontrolled fire (spreading or uncontained flames / heavy smoke)
 
 Return nothing except that character.
@@ -155,11 +156,12 @@ Return nothing except that character.
     full_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
 
     # Extract the character and convert to classification
-    # Look for the last occurrence of N, O, or D in the response
+    # Look for the last occurrence of N, O, C, or D in the response
     classification = None
     char_to_class = {
         'N': 0,  # No flame
         'O': 1,  # Benign or illusory flame  
+        'C': 2,  # Contained real flame
         'D': 3   # Dangerous uncontrolled fire
     }
     
