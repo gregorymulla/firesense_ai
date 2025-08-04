@@ -13,10 +13,14 @@ from fastapi.staticfiles import StaticFiles
 app = FastAPI(title="Fire Detection Demo API")
 
 # CORS configuration
-cors_origins = os.environ.get("CORS_ORIGINS", "").split(",") if os.environ.get("CORS_ORIGINS") else [
-    "http://localhost:3000",
-    "http://localhost:5173",
-]
+cors_origins = (
+    os.environ.get("CORS_ORIGINS", "").split(",")
+    if os.environ.get("CORS_ORIGINS")
+    else [
+        "http://localhost:3000",
+        "http://localhost:5173",
+    ]
+)
 
 # Handle wildcard CORS
 if "*" in cors_origins:
