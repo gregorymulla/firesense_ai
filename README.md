@@ -5,12 +5,13 @@
 
 FireSense is a video feed analyzer that detects fires, powered by the Gemma 3N vision model.
 
-[![FireSense Demo](https://img.youtube.com/vi/16kw5rZLims/0.jpg)](https://youtu.be/16kw5rZLims)
-
+<a href="https://youtu.be/16kw5rZLims">
+  <img src="images/presentation.png" alt="FireSense Demo" width="800px">
+</a>
 
 ## Pipeline
 
-<img src="diagrams/pipeline.png" alt="FireSense Pipeline" style="max-width: 800px;">
+<img src="images/pipeline.png" alt="FireSense Pipeline" style="max-width: 800px;">
 
 
 

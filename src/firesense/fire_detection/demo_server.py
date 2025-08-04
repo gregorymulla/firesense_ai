@@ -87,7 +87,9 @@ def find_ui_directory() -> Path | None:
         ]
         # Add user-specific installation if available
         if site.USER_BASE:
-            standard_paths.append(Path(site.USER_BASE) / "share" / "firesense" / "demo-ui")
+            standard_paths.append(
+                Path(site.USER_BASE) / "share" / "firesense" / "demo-ui"
+            )
         possible_paths.extend(standard_paths)
 
         # Add site-packages specific paths

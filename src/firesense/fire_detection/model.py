@@ -93,7 +93,6 @@ def gemma_fire_inference(
 ) -> FireDescription:
     """Run fire detection inference on an image."""
 
-
     system_prompt = """
 You are **FireSense**, a vision-language model for fire detection in images.
 Do not get fooled by images of fires that appear on tv screens.
@@ -159,10 +158,10 @@ Return nothing except that character.
     # Look for the last occurrence of N, O, C, or D in the response
     classification = None
     char_to_class = {
-        'N': 0,  # No flame
-        'O': 1,  # Benign or illusory flame
-        'C': 2,  # Contained real flame
-        'D': 3   # Dangerous uncontrolled fire
+        "N": 0,  # No flame
+        "O": 1,  # Benign or illusory flame
+        "C": 2,  # Contained real flame
+        "D": 3,  # Dangerous uncontrolled fire
     }
 
     for char in reversed(full_text):
@@ -179,36 +178,44 @@ Return nothing except that character.
 
     return FireDescription(classification=classification)
 
-def infer(model: Any, tokenizer: Any, system_prompt: str, prompt: str, image_path: str, max_new_tokens: int = 256) -> str:
 
-  messages = [
-      {
-          "role": "system",
-          "content": [{"type": "text", "text": system_prompt}]
-      },
-      {
-      "role": "user",
-      "content": [
-          {"type": "image", "image": image_path},
-          {"type": "text", "text": prompt},
-      ],
-      }
-  ]
+def infer(
+    model: Any,
+    tokenizer: Any,
+    system_prompt: str,
+    prompt: str,
+    image_path: str,
+    max_new_tokens: int = 256,
+) -> str:
 
-  device = "cuda" if torch.cuda.is_available() else "cpu"
+    messages = [
+        {"role": "system", "content": [{"type": "text", "text": system_prompt}]},
+        {
+            "role": "user",
+            "content": [
+                {"type": "image", "image": image_path},
+                {"type": "text", "text": prompt},
+            ],
+        },
+    ]
 
-  tokenized = tokenizer.apply_chat_template(
-      messages,
-      add_generation_prompt=True,
-      tokenize=True,
-      return_dict=True,
-      return_tensors="pt",
-  ).to(device)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
-      # Use no_grad context to avoid recompilation
-  with torch.no_grad(), torch.backends.cuda.sdp_kernel(
-      enable_flash=False, enable_math=True, enable_mem_efficient=True
-  ):
+    tokenized = tokenizer.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=True,
+        return_dict=True,
+        return_tensors="pt",
+    ).to(device)
+
+    # Use no_grad context to avoid recompilation
+    with (
+        torch.no_grad(),
+        torch.backends.cuda.sdp_kernel(
+            enable_flash=False, enable_math=True, enable_mem_efficient=True
+        ),
+    ):
         output_ids = model.generate(
             **tokenized,
             max_new_tokens=max_new_tokens,
@@ -221,6 +228,5 @@ def infer(model: Any, tokenizer: Any, system_prompt: str, prompt: str, image_pat
             eos_token_id=tokenizer.eos_token_id,
         )
 
-
-  full_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-  return str(full_text)
+    full_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+    return str(full_text)
