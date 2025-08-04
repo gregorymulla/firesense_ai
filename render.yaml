@@ -4,6 +4,7 @@ services:
     name: firesense-demo
     runtime: docker
     dockerfilePath: ./Dockerfile
+    plan: standard  # Use standard instance for better performance
     envVars:
       - key: DEMO_LOCAL_MODE
         value: "0"
