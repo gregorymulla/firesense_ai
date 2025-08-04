@@ -15,7 +15,7 @@ Try the live demo at [firesense-ai.onrender.com/?id=yvJXFiDQaSc](https://firesen
 
 ## Colab Analysis Quickstart
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gregorymulla/firesense_ai/blob/main/notebooks/firesense_quickstart.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gregorymulla/firesense_ai/blob/main/examples/firesense_quickstart.ipynb)
 
 Try FireSense in Google Colab with free T4 GPU access.
 
