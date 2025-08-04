@@ -10,6 +10,7 @@ from firesense.fire_detection.model import (
     FireDescription,
     gemma_fire_inference,
     setup_model,
+    infer,
 )
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "gemma_fire_inference",
     "process_video_inference",
     "setup_model",
+    "infer",
 ]

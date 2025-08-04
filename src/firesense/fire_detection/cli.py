@@ -90,8 +90,8 @@ def demo(
     ngrok_tunnel = None
     if ngrok:
         try:
-            from pyngrok import ngrok as pyngrok
-            from pyngrok.conf import PyngrokConfig
+            from pyngrok import ngrok as pyngrok  # type: ignore[import-untyped]
+            from pyngrok.conf import PyngrokConfig  # type: ignore[import-untyped]
 
             # Configure pyngrok to not open browser
             pyngrok_config = PyngrokConfig(monitor_thread=False)

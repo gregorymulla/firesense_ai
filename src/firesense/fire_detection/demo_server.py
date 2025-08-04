@@ -3,6 +3,7 @@
 import os
 import sys
 from pathlib import Path
+from typing import Union, Dict, Any, List
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -73,21 +74,21 @@ def find_ui_directory() -> Path | None:
         )
 
         # Standard installation paths
-        possible_paths.extend(
-            [
-                # Site-packages data directory
-                Path(sys.prefix) / "share" / "firesense" / "demo-ui",
-                # Local share directory
-                Path(sys.prefix) / "local" / "share" / "firesense" / "demo-ui",
-                # User-specific installation
-                Path(site.USER_BASE) / "share" / "firesense" / "demo-ui",
-                # System-wide locations
-                Path("/usr/share") / "firesense" / "demo-ui",
-                Path("/usr/local/share") / "firesense" / "demo-ui",
-                # Alternative package data location
-                Path(sys.prefix) / "firesense" / "demo-ui",
-            ]
-        )
+        standard_paths = [
+            # Site-packages data directory
+            Path(sys.prefix) / "share" / "firesense" / "demo-ui",
+            # Local share directory
+            Path(sys.prefix) / "local" / "share" / "firesense" / "demo-ui",
+            # System-wide locations
+            Path("/usr/share") / "firesense" / "demo-ui",
+            Path("/usr/local/share") / "firesense" / "demo-ui",
+            # Alternative package data location
+            Path(sys.prefix) / "firesense" / "demo-ui",
+        ]
+        # Add user-specific installation if available
+        if site.USER_BASE:
+            standard_paths.append(Path(site.USER_BASE) / "share" / "firesense" / "demo-ui")
+        possible_paths.extend(standard_paths)
 
         # Add site-packages specific paths
         for site_dir in site.getsitepackages():
@@ -113,11 +114,11 @@ def find_ui_directory() -> Path | None:
         if data_path:
             possible_paths.append(Path(data_path) / "share" / "firesense" / "demo-ui")
 
-        # Remove duplicates while preserving order
+        # Remove duplicates while preserving order and filter out None values
         seen = set()
         unique_paths = []
         for path in possible_paths:
-            if path not in seen:
+            if path is not None and path not in seen:
                 seen.add(path)
                 unique_paths.append(path)
 
@@ -157,7 +158,7 @@ if UI_DIR and UI_DIR.exists():
 
 
 @app.get("/api/demo/{video_id}")
-async def get_demo(video_id: str):
+async def get_demo(video_id: str) -> JSONResponse:
     """Serve the JSON file for the specified video_id with data transformation."""
     demo_file = PROJECT_ROOT / DEMO_FOLDER / f"{video_id}.json"
 
@@ -230,7 +231,7 @@ else:
 
 
 @app.get("/")
-async def serve_ui() -> HTMLResponse:
+async def serve_ui() -> Union[HTMLResponse, JSONResponse]:
     """Serve the main UI HTML file."""
     if UI_DIR is None:
         error_detail = {
@@ -290,7 +291,7 @@ async def serve_ui() -> HTMLResponse:
 
 
 @app.get("/health")
-async def health_check() -> dict:
+async def health_check() -> Dict[str, Any]:
     """Health check endpoint."""
     return {
         "status": "healthy",
@@ -302,11 +303,11 @@ async def health_check() -> dict:
 
 
 @app.get("/debug/ui-status")
-async def debug_ui_status() -> dict:
+async def debug_ui_status() -> Dict[str, Any]:
     """Debug endpoint to check UI file status."""
     ui_dir = find_ui_directory()
 
-    status = {
+    status: Dict[str, Any] = {
         "ui_found": ui_dir is not None,
         "ui_directory": str(ui_dir) if ui_dir else None,
         "project_root": str(PROJECT_ROOT),

@@ -178,3 +178,50 @@ Return nothing except that character.
         classification = 0
 
     return FireDescription(classification=classification)
+
+def infer(model: Any, tokenizer: Any, system_prompt: str, prompt: str, image_path: str, max_new_tokens: int = 256) -> str:
+
+  messages = [
+      {
+          "role": "system",
+          "content": [{"type": "text", "text": system_prompt}]
+      },
+      {
+      "role": "user",
+      "content": [
+          {"type": "image", "image": image_path},
+          {"type": "text", "text": prompt},
+      ],
+      }
+  ]
+
+  device = "cuda" if torch.cuda.is_available() else "cpu"
+
+  tokenized = tokenizer.apply_chat_template(
+      messages,
+      add_generation_prompt=True,
+      tokenize=True,
+      return_dict=True,
+      return_tensors="pt",
+  ).to(device)
+
+      # Use no_grad context to avoid recompilation
+  with torch.no_grad():
+    with torch.backends.cuda.sdp_kernel(
+        enable_flash=False, enable_math=True, enable_mem_efficient=True
+    ):
+        output_ids = model.generate(
+            **tokenized,
+            max_new_tokens=max_new_tokens,
+            temperature=1.0,
+            top_p=0.95,
+            top_k=64,
+            streamer=None,  # Disable streaming for cleaner output
+            use_cache=True,  # Enable KV cache
+            pad_token_id=tokenizer.pad_token_id,
+            eos_token_id=tokenizer.eos_token_id,
+        )
+
+
+  full_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+  return str(full_text)
