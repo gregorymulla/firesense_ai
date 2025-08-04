@@ -92,19 +92,17 @@ def gemma_fire_inference(
     max_new_tokens: int = 256,
 ) -> FireDescription:
     """Run fire detection inference on an image."""
+
+
     system_prompt = """
-    You are **FireSense**, a vision-language model for real-time fire detection.
+You are **FireSense**, a vision-language model for fire detection in images.
 
-On every image you receive, output **one digit only** (no words, no punctuation):
+On every image you receive, output **one character only** (no words, no punctuation):
+N - No flame present
+O - Benign or illusory flame (birthday candle, stove burner, lighter, match, or a fire video/animation on a TV, monitor, tablet, or phone)
+D - Dangerous uncontrolled fire (spreading or uncontained flames / heavy smoke)
 
-0 - No flame present
-1 - Benign or illusory flame (birthday candle, stove burner, lighter, match, or a fire video/animation on a TV, monitor, tablet, or phone)
-2 - Contained real flame (fire pit, barbecue, indoor fireplace)
-3 - Dangerous uncontrolled fire (spreading or uncontained flames / heavy smoke)
-
-If unsure, choose the **higher, safer** category.
-
-Return nothing except that single digit.
+Return nothing except that character.
     """
 
     system_message = {
@@ -156,18 +154,24 @@ Return nothing except that single digit.
 
     full_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
 
-    # Extract the single digit from the response
-    # Look for the last occurrence of a digit 0-3 in the response
+    # Extract the character and convert to classification
+    # Look for the last occurrence of N, O, or D in the response
     classification = None
+    char_to_class = {
+        'N': 0,  # No flame
+        'O': 1,  # Benign or illusory flame  
+        'D': 3   # Dangerous uncontrolled fire
+    }
+    
     for char in reversed(full_text):
-        if char in "0123":
-            classification = int(char)
+        if char in char_to_class:
+            classification = char_to_class[char]
             break
 
     if classification is None:
-        # If no valid digit found, default to 0 (no flame)
+        # If no valid character found, default to 0 (no flame)
         print(
-            f"Warning: No valid classification digit found in model output: {full_text}"
+            f"Warning: No valid classification character found in model output: {full_text}"
         )
         classification = 0
 
