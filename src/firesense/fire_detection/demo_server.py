@@ -12,13 +12,19 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="Fire Detection Demo API")
 
-# CORS configuration for React development
+# CORS configuration
+cors_origins = os.environ.get("CORS_ORIGINS", "").split(",") if os.environ.get("CORS_ORIGINS") else [
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
+
+# Handle wildcard CORS
+if "*" in cors_origins:
+    cors_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:5173",
-    ],  # React dev servers
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -1,0 +1,13 @@
+services:
+  # Web service for the FireSense demo
+  - type: web
+    name: firesense-demo
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DEMO_LOCAL_MODE
+        value: "0"
+      - key: PYTHON_VERSION
+        value: "3.11"
+    healthCheckPath: /health
+    autoDeploy: true
