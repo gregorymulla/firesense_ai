@@ -9,15 +9,15 @@ from firesense.fire_detection.inference import process_video_inference
 from firesense.fire_detection.model import (
     FireDescription,
     gemma_fire_inference,
-    setup_model,
     infer,
+    setup_model,
 )
 
 __all__ = [
     "FireDescription",
     "FireDetectionConfig",
     "gemma_fire_inference",
+    "infer",
     "process_video_inference",
     "setup_model",
-    "infer",
 ]

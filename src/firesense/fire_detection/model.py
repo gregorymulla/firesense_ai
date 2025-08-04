@@ -160,11 +160,11 @@ Return nothing except that character.
     classification = None
     char_to_class = {
         'N': 0,  # No flame
-        'O': 1,  # Benign or illusory flame  
+        'O': 1,  # Benign or illusory flame
         'C': 2,  # Contained real flame
         'D': 3   # Dangerous uncontrolled fire
     }
-    
+
     for char in reversed(full_text):
         if char in char_to_class:
             classification = char_to_class[char]
@@ -206,10 +206,9 @@ def infer(model: Any, tokenizer: Any, system_prompt: str, prompt: str, image_pat
   ).to(device)
 
       # Use no_grad context to avoid recompilation
-  with torch.no_grad():
-    with torch.backends.cuda.sdp_kernel(
-        enable_flash=False, enable_math=True, enable_mem_efficient=True
-    ):
+  with torch.no_grad(), torch.backends.cuda.sdp_kernel(
+      enable_flash=False, enable_math=True, enable_mem_efficient=True
+  ):
         output_ids = model.generate(
             **tokenized,
             max_new_tokens=max_new_tokens,

@@ -3,7 +3,7 @@
 import os
 import sys
 from pathlib import Path
-from typing import Union, Dict, Any, List
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -231,7 +231,7 @@ else:
 
 
 @app.get("/")
-async def serve_ui() -> Union[HTMLResponse, JSONResponse]:
+async def serve_ui() -> HTMLResponse | JSONResponse:
     """Serve the main UI HTML file."""
     if UI_DIR is None:
         error_detail = {
@@ -291,7 +291,7 @@ async def serve_ui() -> Union[HTMLResponse, JSONResponse]:
 
 
 @app.get("/health")
-async def health_check() -> Dict[str, Any]:
+async def health_check() -> dict[str, Any]:
     """Health check endpoint."""
     return {
         "status": "healthy",
@@ -303,11 +303,11 @@ async def health_check() -> Dict[str, Any]:
 
 
 @app.get("/debug/ui-status")
-async def debug_ui_status() -> Dict[str, Any]:
+async def debug_ui_status() -> dict[str, Any]:
     """Debug endpoint to check UI file status."""
     ui_dir = find_ui_directory()
 
-    status: Dict[str, Any] = {
+    status: dict[str, Any] = {
         "ui_found": ui_dir is not None,
         "ui_directory": str(ui_dir) if ui_dir else None,
         "project_root": str(PROJECT_ROOT),
