@@ -1,11 +1,10 @@
 """Model setup and inference for Gemma 3N E4B fire detection."""
 
-import json
 import os
 from typing import Any
 
 import torch
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 
 # Disable torch compile to avoid recompilation errors
 os.environ["TORCH_COMPILE_DISABLE"] = "1"
@@ -161,13 +160,15 @@ Return nothing except that single digit.
     # Look for the last occurrence of a digit 0-3 in the response
     classification = None
     for char in reversed(full_text):
-        if char in '0123':
+        if char in "0123":
             classification = int(char)
             break
 
     if classification is None:
         # If no valid digit found, default to 0 (no flame)
-        print(f"Warning: No valid classification digit found in model output: {full_text}")
+        print(
+            f"Warning: No valid classification digit found in model output: {full_text}"
+        )
         classification = 0
 
     return FireDescription(classification=classification)

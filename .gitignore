@@ -173,3 +173,6 @@ ui/analysis_config.json
 node_modules/
 demo-ui/node_modules/
 */node_modules/
+
+# Local scripts and notebooks
+localscripts/

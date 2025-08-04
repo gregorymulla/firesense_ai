@@ -5,7 +5,6 @@ import sys
 import time
 import webbrowser
 from pathlib import Path
-import importlib.resources
 
 import typer
 from rich.console import Console
@@ -23,7 +22,9 @@ console = Console()
 
 @app.command()
 def demo(
-    video_id: str = typer.Argument("yvJXFiDQaSc", help="Demo video ID to display (default: yvJXFiDQaSc)"),
+    video_id: str = typer.Argument(
+        "yvJXFiDQaSc", help="Demo video ID to display (default: yvJXFiDQaSc)"
+    ),
     port: int = typer.Option(8000, "--port", help="Server port for both API and UI"),
     no_browser: bool = typer.Option(
         False, "--no-browser", help="Don't open browser automatically"
@@ -36,7 +37,7 @@ def demo(
     ),
 ) -> None:
     """Launch demo UI for pre-analyzed fire detection results."""
-    
+
     # Workaround for typer bug with default arguments
     if video_id.isdigit() and len(video_id) == 1:
         video_id = "yvJXFiDQaSc"
@@ -78,7 +79,7 @@ def demo(
             "--host",
             "0.0.0.0",
         ],
-        env=env
+        env=env,
     )
 
     # Wait for server to start
@@ -91,10 +92,10 @@ def demo(
         try:
             from pyngrok import ngrok as pyngrok
             from pyngrok.conf import PyngrokConfig
-            
+
             # Configure pyngrok to not open browser
             pyngrok_config = PyngrokConfig(monitor_thread=False)
-            
+
             console.print("[blue]Creating ngrok tunnel...[/blue]")
             ngrok_tunnel = pyngrok.connect(port, pyngrok_config=pyngrok_config)
             public_url = ngrok_tunnel.public_url
@@ -132,12 +133,13 @@ def demo(
         if ngrok and ngrok_tunnel:
             try:
                 from pyngrok import ngrok as pyngrok
+
                 console.print("[yellow]Closing ngrok tunnel...[/yellow]")
                 pyngrok.disconnect(ngrok_tunnel.public_url)
                 pyngrok.kill()
             except Exception:
                 pass  # Ignore errors during cleanup
-        
+
         # Cleanup process
         if server_process.poll() is None:
             server_process.terminate()
@@ -151,7 +153,9 @@ def demo(
 
 @app.command()
 def analyze(
-    video_id: str = typer.Argument("yvJXFiDQaSc", help="YouTube video ID or URL to analyze (default: yvJXFiDQaSc)"),
+    video_id: str = typer.Argument(
+        "yvJXFiDQaSc", help="YouTube video ID or URL to analyze (default: yvJXFiDQaSc)"
+    ),
     interval: float = typer.Option(
         1.0, "--interval", "-i", help="Frame extraction interval in seconds"
     ),
@@ -160,41 +164,44 @@ def analyze(
     ),
 ) -> None:
     """Download YouTube video, extract frames, and analyze for fire detection."""
-    
+
     # Workaround for typer bug with default arguments
     if video_id.isdigit() and len(video_id) == 1:
         video_id = "yvJXFiDQaSc"
 
     console.print("[bold green]🔥 Starting Fire Detection Analysis[/bold green]")
-    
+
     # Check GPU availability
     import torch
+
     gpu_available = torch.cuda.is_available()
-    
+
     if not gpu_available:
         console.print("\n[yellow]⚠️  GPU Not Available - Using Mock Inference[/yellow]")
-        console.print("[dim]Running with mock inference that generates random results for demonstration.[/dim]")
-        console.print("[dim]For real fire detection, a CUDA-capable GPU is required.[/dim]")
+        console.print(
+            "[dim]Running with mock inference that generates random results for demonstration.[/dim]"
+        )
+        console.print(
+            "[dim]For real fire detection, a CUDA-capable GPU is required.[/dim]"
+        )
         console.print()
-    
+
     console.print(f"[blue]Video ID: {video_id}[/blue]")
     console.print(f"[blue]Frame interval: {interval}s[/blue]")
     console.print(f"[blue]Output directory: {output_dir}[/blue]")
-    console.print(f"[blue]GPU Available: {'Yes' if gpu_available else 'No (Mock Mode)'}[/blue]")
+    console.print(
+        f"[blue]GPU Available: {'Yes' if gpu_available else 'No (Mock Mode)'}[/blue]"
+    )
 
     try:
         # Run the appropriate analysis based on GPU availability
         if gpu_available:
             output_file = process_video_inference(
-                video_id=video_id, 
-                interval_seconds=interval, 
-                output_dir=str(output_dir)
+                video_id=video_id, interval_seconds=interval, output_dir=str(output_dir)
             )
         else:
             output_file = process_video_inference_mock(
-                video_id=video_id, 
-                interval_seconds=interval, 
-                output_dir=str(output_dir)
+                video_id=video_id, interval_seconds=interval, output_dir=str(output_dir)
             )
 
         console.print("\n[bold green]✅ Analysis complete![/bold green]")

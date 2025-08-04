@@ -2,7 +2,7 @@
 
 import json
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .mock_inference import mock_gemma_fire_inference, mock_setup_model
@@ -17,7 +17,7 @@ def process_video_inference_mock(
     # Always use localdemo directory structure
     demo_path = Path("localdemo")
     demo_path.mkdir(exist_ok=True)
-    
+
     # Frames go under localdemo/frames/
     frames_base_dir = demo_path / "frames"
     frames_base_dir.mkdir(exist_ok=True)
@@ -25,7 +25,9 @@ def process_video_inference_mock(
     # Extract frames
     print("\n=== Frame Extraction ===")
     frames_dir, frames_info, video_info = download_and_extract_frames(
-        video_id, interval_seconds=interval_seconds, output_base_dir=str(frames_base_dir)
+        video_id,
+        interval_seconds=interval_seconds,
+        output_base_dir=str(frames_base_dir),
     )
 
     # Load mock model
@@ -81,9 +83,11 @@ def process_video_inference_mock(
                 0: "No flame",
                 1: "Benign/illusory flame",
                 2: "Contained real flame",
-                3: "Dangerous uncontrolled fire"
+                3: "Dangerous uncontrolled fire",
             }
-            print(f"  - Classification (mock): {fire_report.classification} ({classification_labels.get(fire_report.classification, 'Unknown')})")
+            print(
+                f"  - Classification (mock): {fire_report.classification} ({classification_labels.get(fire_report.classification, 'Unknown')})"
+            )
             print(f"  - Mock inference time: {elapsed_time:.3f}s")
 
         except Exception as e:
@@ -131,7 +135,7 @@ def process_video_inference_mock(
         "url": f"https://www.youtube.com/watch?v={clean_video_id}",
         "video_info": video_info,
         "processing_info": {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "interval_seconds": interval_seconds,
             "total_frames": len(frames_info),
             "frames_directory": str(frames_dir),

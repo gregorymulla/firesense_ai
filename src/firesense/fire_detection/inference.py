@@ -19,7 +19,7 @@ def process_video_inference(
     # Always use localdemo directory structure
     demo_path = Path("localdemo")
     demo_path.mkdir(exist_ok=True)
-    
+
     # Frames go under localdemo/frames/
     frames_base_dir = demo_path / "frames"
     frames_base_dir.mkdir(exist_ok=True)
@@ -27,7 +27,9 @@ def process_video_inference(
     # Extract frames
     print("\n=== Frame Extraction ===")
     frames_dir, frames_info, video_info = download_and_extract_frames(
-        video_id, interval_seconds=interval_seconds, output_base_dir=str(frames_base_dir)
+        video_id,
+        interval_seconds=interval_seconds,
+        output_base_dir=str(frames_base_dir),
     )
 
     # Load model
@@ -81,9 +83,11 @@ def process_video_inference(
                 0: "No flame",
                 1: "Benign/illusory flame",
                 2: "Contained real flame",
-                3: "Dangerous uncontrolled fire"
+                3: "Dangerous uncontrolled fire",
             }
-            print(f"  - Classification: {fire_report.classification} ({classification_labels.get(fire_report.classification, 'Unknown')})")  
+            print(
+                f"  - Classification: {fire_report.classification} ({classification_labels.get(fire_report.classification, 'Unknown')})"
+            )
             print(f"  - Inference time: {elapsed_time:.3f}s")
 
         except Exception as e:

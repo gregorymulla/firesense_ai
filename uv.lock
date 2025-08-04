@@ -649,8 +649,10 @@ youtube = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "black" },
     { name = "build" },
     { name = "python-dotenv" },
+    { name = "ruff" },
     { name = "twine" },
 ]
 
@@ -696,8 +698,10 @@ provides-extras = ["dev", "docs", "quantization", "youtube"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "black", specifier = ">=25.1.0" },
     { name = "build", specifier = ">=1.2.2.post1" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
+    { name = "ruff", specifier = ">=0.12.7" },
     { name = "twine", specifier = ">=6.1.0" },
 ]
 
