@@ -159,6 +159,7 @@ ui/analysis_config.json
 !docs/images/*.jpg
 !README_images/*.png
 !examples/small_*.jpg
+!diagrams/*.png
 
 # Allow configuration examples
 !config/example_*.json
