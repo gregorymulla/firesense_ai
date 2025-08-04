@@ -3,7 +3,7 @@
 # Start script for Render deployment
 
 # Set default port if not provided by Render
-PORT=${PORT:-10000}
+PORT=${PORT:-8000}
 
 # Set production CORS origins (can be overridden by env var)
 export CORS_ORIGINS=${CORS_ORIGINS:-"*"}

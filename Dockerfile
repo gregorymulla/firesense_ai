@@ -48,7 +48,7 @@ COPY render_start.sh ./
 RUN chmod +x render_start.sh
 
 # Expose port (Render will override with PORT env var)
-EXPOSE 10000
+EXPOSE 8000
 
 # Start the application
 CMD ["./render_start.sh"]
