@@ -11,11 +11,13 @@ FireSense is a video feed analyzer that detects fires, powered by the Gemma 3N v
 
 ## Live Demo
 
-Try the live demo at [firesense-ai.onrender.com/?id=yvJXFiDQaSc](https://firesense-ai.onrender.com/?id=yvJXFiDQaSc)
+Try the live demo at <a href="https://firesense-ai.onrender.com/?id=yvJXFiDQaSc" target="_blank">firesense-ai.onrender.com/?id=yvJXFiDQaSc</a>
 
 ## Colab Analysis Quickstart
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gregorymulla/firesense_ai/blob/main/examples/firesense_quickstart.ipynb)
+<a href="https://colab.research.google.com/github/gregorymulla/firesense_ai/blob/main/examples/firesense_quickstart.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
 
 Try FireSense in Google Colab with free T4 GPU access.
 
